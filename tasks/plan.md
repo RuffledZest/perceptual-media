@@ -371,14 +371,29 @@ Either way: a written result in `docs/results/phase1_result.md`. Negative result
 | Physical captures lost | High | External backed-up path, decided before Week 4 (Open Question 3) |
 | Scope creep into Weeks 5–6 before the Week-4 gate | Med | `todo.md` stops at Task 27; branch tasks are written only after the gate |
 
-## Open Questions (need your answer before the relevant task; none block Tasks 0–6)
+## Resolved Questions (2026-09-18)
 
-1. **Photographic + face images for the corpus (Task 8):** do you have a folder to point at, or
-   should the builder accept an empty `--photos` and we add them later? Recommendation: start
-   with your own photos (no licensing questions), add a small public set (e.g. Kodak-24) if needed.
-2. **CUDA timing (Task 19):** switch now or at Week 3? Recommendation: Week 3 — keeps Weeks 1–2
-   friction-free and avoids a ~3 GB download today.
-3. **Captures location (before Task 23):** which backed-up path outside the repo?
-   e.g. `D:\pm-captures\` synced to cloud. Goes into `configs/paths.yaml`.
-4. **Viewing condition to pin for Watson (Task 15):** default proposal — 96 DPI screen at 60 cm
-   (≈ 35 px/degree). Say if your target medium is print-first and we'll pin to 300 DPI at 40 cm.
+1. **Photographic corpus source:** Kaggle `arnaud58/landscape-pictures` (4,319 JPEGs, mostly
+   800–1600 px), downloaded to `configs/paths.yaml → datasets.landscape_pictures`. Task 8's
+   builder samples a fixed, seeded subset (default 40) and resizes/centre-crops to 512×512;
+   the manifest records the source filename. **Faces:** not sourced; the `face` class is skipped
+   until a folder is provided (`datasets.faces` empty).
+2. **CUDA:** done now. `torch==2.14.0+cu130` via `[tool.uv.sources]`, verified on the RTX 3050.
+   Task 19 reduces to "harness uses GPU if available".
+3. **Captures location:** `configs/paths.yaml → captures` =
+   `C:/Users/Asus/Downloads/perceptual-media-data/captures`. **Caveat:** `Downloads` is not
+   backed up — before Week 4, either point this at a cloud-synced folder or add the directory to
+   a sync client. Everything else under `perceptual-media-data` is re-downloadable.
+4. **Watson viewing condition:** decided — default `ViewingCondition(dpi=96, distance_cm=60)`
+   (≈ 35 px/degree, a laptop/desktop screen). Reason: the Week-4 2AFC visibility study will be
+   run on-screen, and the perceptual model must match the condition the human judgement is made
+   under, otherwise the calibration in Branch B is meaningless. A `print_300dpi_40cm` preset
+   (≈ 84 px/degree) is provided as a second condition for the print channel; both are logged in
+   `ResultRow.capture_conditions` when relevant.
+
+## Reference implementations reviewed
+
+- `docs/research/stegastamp_pimog_notes.md` — StegaStamp's `transform_net` (ranges, ramps,
+  differentiable JPEG surrogate, blur mixture, perspective sampling) and PIMoG's `Noise_Layer.py`
+  (light field, moiré formula). Feeds concrete defaults into Tasks 10–12 and confirms the
+  `Marker` LLR interface matches how StegaStamp's decoder is used (BCH outside the network).

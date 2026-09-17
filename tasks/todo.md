@@ -4,7 +4,7 @@ Checklist view of `tasks/plan.md`. Tick tasks only when every acceptance criteri
 is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Week-4 gate.
 
 ## Phase 0 — Skeleton
-- [ ] Task 0: `uv add lpips scikit-image pyyaml pandas`; first commit
+- [x] Task 0: `uv add lpips scikit-image pyyaml pandas`; first commit (2026-09-18)
 
 ## Phase 1 — Week 1: Harness
 - [ ] Task 1: core — types, `seed_everything`, image I/O
@@ -32,7 +32,7 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 - [ ] **Checkpoint W2** — reference line exists; stop tuning classical
 
 ## Phase 3 — Week 3: Learned baseline
-- [ ] Task 19: CUDA torch build; GPU-if-available in harness
+- [ ] Task 19: ~~CUDA torch build~~ (done in Task 0); GPU-if-available in harness
 - [ ] Task 20: Video Seal installed; published number reproduced; recorded
 - [ ] Task 21: `VideoSealMarker` adapter
 - [ ] Task 22: same sweep, overlaid on Week-2 plots
@@ -49,8 +49,8 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 ## Phase 5 — Weeks 5–6
 - [ ] (tasks written after the Week-4 gate)
 
-## Open questions
-- [ ] Q1: photo/face source folder for corpus
-- [ ] Q2: CUDA now or Week 3 (rec: Week 3)
-- [ ] Q3: external captures path
-- [ ] Q4: Watson viewing condition (rec: 96 DPI @ 60 cm)
+## Open questions — resolved 2026-09-18 (see plan.md)
+- [x] Q1: Kaggle landscape-pictures downloaded to external root; faces deferred
+- [x] Q2: CUDA switched now (cu130)
+- [x] Q3: captures at external root (needs backup/sync before Week 4)
+- [x] Q4: Watson default 96 DPI @ 60 cm; print preset 300 DPI @ 40 cm
