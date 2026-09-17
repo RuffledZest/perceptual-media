@@ -1,0 +1,13 @@
+# Paths OUTSIDE the repo. Everything under `external_root` is either downloadable
+# (datasets) or irreplaceable (captures). Captures are the one asset that cannot be
+# regenerated from code + seed: keep `captures` on a backed-up drive/cloud sync.
+external_root: C:/Users/Asus/Downloads/perceptual-media-data
+
+datasets:
+  # Kaggle arnaud58/landscape-pictures — photographic "textured" class source for the corpus.
+  landscape_pictures: ${external_root}/datasets/landscape-pictures
+  # Faces: not yet sourced (see plan.md Open Question 1). Leave empty to skip the class.
+  faces: ""
+
+# Week 4: phone photos of printed / displayed marked images + captures.csv log.
+captures: ${external_root}/captures

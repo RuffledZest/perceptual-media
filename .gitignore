@@ -1,0 +1,38 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+build/
+dist/
+
+# --- Generated / heavy artifacts: never commit these ---
+# Marked images, phone captures, checkpoints, plots are all reproducible
+# from code + seeds (except captures, which live OUTSIDE the repo).
+data/*
+!data/.gitkeep
+outputs/*
+!outputs/.gitkeep
+runs/
+*.png
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+*.bmp
+*.webp
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.npy
+*.npz
+
+# --- Editor / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
