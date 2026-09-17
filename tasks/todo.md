@@ -7,7 +7,7 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 - [x] Task 0: `uv add lpips scikit-image pyyaml pandas`; first commit (2026-09-18)
 
 ## Phase 1 — Week 1: Harness
-- [ ] Task 1: core — types, `seed_everything`, image I/O
+- [x] Task 1: core — types, `seed_everything`, image I/O (2026-09-18)
 - [ ] Task 2: config — YAML → dataclasses, strict keys
 - [ ] Task 3: `Marker` protocol, `DecodeResult`, `NullMarker`
 - [ ] Task 4: `ResultRow` (§6 schema) + `ResultWriter`

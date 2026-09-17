@@ -393,6 +393,11 @@ Either way: a written result in `docs/results/phase1_result.md`. Negative result
 
 ## Reference implementations reviewed
 
+- `claude_markdowns/compass_artifact_*.md` — the pre-brief literature review. Consistent with
+  the brief; one recommendation worth carrying: **print-to-camera is the first physical target**
+  (medium difficulty, no moiré/refresh). When sweeps get expensive, `print_camera` is the
+  primary preset and `screen_camera` the secondary.
+
 - `docs/research/stegastamp_pimog_notes.md` — StegaStamp's `transform_net` (ranges, ramps,
   differentiable JPEG surrogate, blur mixture, perspective sampling) and PIMoG's `Noise_Layer.py`
   (light field, moiré formula). Feeds concrete defaults into Tasks 10–12 and confirms the
