@@ -36,3 +36,6 @@ runs/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Result figures for writeups are small and derived from committed configs; allow them.
+!docs/results/figures/*.png

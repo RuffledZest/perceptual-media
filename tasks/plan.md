@@ -304,16 +304,16 @@ correlations (soft LLRs) and a global normalised-correlation detection score.
 
 #### Task 18: Week-2 sweep, plots, and failure writeup
 **Acceptance criteria:**
-- [ ] `configs/experiments/classical_sweep.yaml`: full corpus × {print, screen} × severity {0, .25, .5, .75, 1} × strength grid × 3 seeds, with control
-- [ ] The three §6 plots plus BER-vs-angle (perspective isolated) and BER-vs-blur
-- [ ] `docs/results/week2_classical.md`: per-class failure analysis — *where* and *why* it breaks (expected: perspective + blur). This is the reference line for every later chart
+- [x] `configs/experiments/classical_sweep.yaml`: full corpus × {print, screen} × severity {0, .25, .5, .75, 1} × strength grid × 3 seeds, with control
+- [x] The three §6 plots plus BER-vs-angle (perspective isolated) and BER-vs-blur
+- [x] `docs/results/week2_classical.md`: per-class failure analysis — *where* and *why* it breaks (expected: perspective + blur). This is the reference line for every later chart
 
 **Dependencies:** Task 17. **Scope:** M
 
 ### Checkpoint — Week 2 complete
-- [ ] Classical numbers on the board; harness validated by a real marker
+- [x] Classical numbers on the board; harness validated by a real marker
 - [x] Watson slack maps eyeballed on flat vs textured images — do they match intuition? (2026-09-18: yes — flat uniform/low, poster only on letter edges, photo high on foliage low on sky)
-- [ ] Stop improving the classical system. Move on.
+- [x] Stop improving the classical system. Move on.
 
 ---
 

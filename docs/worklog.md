@@ -77,4 +77,22 @@ visually: plausible phone photos (foreshortening, softening, colour shift, scree
   coefficients pools to a visible error (Watson's β = 4 Minkowski pooling). Capacity must
   budget the *pooled* JND, not the per-coefficient sum — otherwise flat images look markable.
 
-**Next:** Task 16 (BCH 64→127) → Task 17 (classical SS marker) → Task 18 (sweep + writeup).
+- Task 16: BCH(127,64) via `galois` (t = 10). ECC lives in the **harness**, not the marker
+  (`EccConfig`), mirroring StegaStamp; markers see 127 raw channel bits.
+- Task 17: `ClassicalSSMarker` (keyed chip plan, pilot slot, slack-normalised correlator,
+  provisional capacity + refusal). Test sizes had to grow to 192–256 px: processing gain needs
+  chips (64 px = 18 chips/bit, z ≈ 3).
+- Task 18: two sweeps (4,824 + 2,412 rows, ~13 min on the 3050), four figures committed under
+  `docs/results/figures/`, writeup `docs/results/week2_classical.md`.
+
+**Week-2 result (Checkpoint W2):** classical baseline is perfect on the digital channel and
+dead on both camera channels at every severity. Cause: geometric sync — 1° tilt → 17 % BER,
+3° → no recovery, oracle rectify → BER 0. Two findings beyond the brief's prediction: (a) at
+Watson threshold a mark on a flat image is below the JPEG quantisation step and vanishes at
+Q75, while photos survive Q25 — the budget must be channel-aware; (b) one Watson JND per
+coefficient pools to LPIPS 0.4–0.6 on flat/gradient images; the invisible operating point is
+s ≈ 0.1–0.25 where host interference already costs 3–5 % BER. Control set: 0 false
+recoveries in 2,412 trials, pilot z ~ N(0,1) as designed.
+
+**Next:** Phase 3 / Week 3 — Task 19 (GPU-if-available is already true; reduce to a check)
+→ Task 20 (Video Seal install + reproduce) → Task 21 (`VideoSealMarker`) → Task 22 (same sweep).
