@@ -12,6 +12,7 @@ uv sync                                        # deps (CUDA torch on Windows via
 uv run pytest                                  # test suite
 uv run pm-corpus build                         # build data/corpus (synthetic + photos from configs/paths.yaml)
 uv run pm-run configs/experiments/smoke.yaml   # run an experiment -> outputs/<name>-<stamp>/results.csv
+uv run pm-plot outputs/<run>                   # BER-vs-severity, ROC, robustness-imperceptibility frontier
 ```
 
 Layout: `src/perceptual_media/{core,markers,distort,metrics,harness}`, configs in `configs/`,

@@ -1,0 +1,27 @@
+# NullMarker across both channel presets and a severity grid: the reference line on every chart.
+# Expected: BER ~0.5 everywhere, AUC ~0.5, recovery 0.
+name: null_sweep
+seed: 0
+
+corpus:
+  manifest: data/corpus/manifest.csv
+
+marker:
+  name: "null"
+  n_bits: 64
+
+distortions:
+  - {preset: identity, severity: 0.0}
+  - {preset: print_camera, severity: 0.25}
+  - {preset: print_camera, severity: 0.5}
+  - {preset: print_camera, severity: 0.75}
+  - {preset: print_camera, severity: 1.0}
+  - {preset: screen_camera, severity: 0.25}
+  - {preset: screen_camera, severity: 0.5}
+  - {preset: screen_camera, severity: 0.75}
+  - {preset: screen_camera, severity: 1.0}
+
+strengths: [1.0]
+control: true
+output_dir: outputs
+device: auto

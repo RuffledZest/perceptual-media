@@ -20,8 +20,8 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 - [x] Task 10: JPEG (real + differentiable) + defocus / motion blur (2026-09-18)
 - [x] Task 11: illumination + perspective (with oracle inverse) (2026-09-18)
 - [x] Task 12: moiré + `print_camera` / `screen_camera` presets with severity knob (2026-09-18)
-- [ ] Task 13: plots — BER vs severity per class, ROC, recovery-vs-LPIPS frontier
-- [ ] **Checkpoint W1** — corpus → run → plot unattended; distorted sample looks like a phone photo
+- [x] Task 13: plots — BER vs severity per class, ROC, recovery-vs-LPIPS frontier (2026-09-18)
+- [x] **Checkpoint W1** — corpus → run → plot unattended; distorted sample looks like a phone photo (2026-09-18: null_sweep 1,206 rows in 33 s on GPU, 147 tests in 14 s)
 
 ## Phase 2 — Week 2: Classical baseline
 - [ ] Task 14: block DCT + YCbCr utils

@@ -25,6 +25,7 @@ dependencies = [
 [project.scripts]
 pm-run = "perceptual_media.harness.cli:main"
 pm-corpus = "perceptual_media.corpus.build:main"
+pm-plot = "perceptual_media.harness.plots:main"
 
 [build-system]
 requires = ["uv_build>=0.12.1,<0.13.0"]

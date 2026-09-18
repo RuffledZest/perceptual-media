@@ -246,18 +246,18 @@ named chains the rest of the project evaluates against.
 **Description:** The three figures brief §6 requires, generated from `results.csv` only.
 
 **Acceptance criteria:**
-- [ ] `harness/plots.py` produces: (a) BER vs severity per image class, (b) ROC with the control set, (c) robustness–imperceptibility frontier (recovery rate vs LPIPS)
-- [ ] `uv run pm-plot outputs/<run>` writes PNGs into the run dir; NullMarker run shows a flat 0.5 line and AUC ≈ 0.5
-- [ ] Each figure's title includes run id and git hash
+- [x] `harness/plots.py` produces: (a) BER vs severity per image class, (b) ROC with the control set, (c) robustness–imperceptibility frontier (recovery rate vs LPIPS)
+- [x] `uv run pm-plot outputs/<run>` writes PNGs into the run dir; NullMarker run shows a flat 0.5 line and AUC ≈ 0.5
+- [x] Each figure's title includes run id and git hash
 
 **Verification:** `uv run pytest tests/harness/test_plots.py -q` (smoke: files exist, non-empty)
 **Dependencies:** Task 12. **Files:** `harness/plots.py`, `pyproject.toml`, tests. **Scope:** S
 
 ### Checkpoint — Week 1 complete
-- [ ] `uv run pytest` green, < 60 s total on CPU
-- [ ] `pm-corpus build` → `pm-run` (NullMarker, both presets, severity grid) → `pm-plot` runs unattended
-- [ ] Every §6 column populated for marked rows
-- [ ] Human review of a distorted sample at severity 0.5 — does it look like a phone photo?
+- [x] `uv run pytest` green, < 60 s total on CPU
+- [x] `pm-corpus build` → `pm-run` (NullMarker, both presets, severity grid) → `pm-plot` runs unattended
+- [x] Every §6 column populated for marked rows
+- [x] Human review of a distorted sample at severity 0.5 — does it look like a phone photo?
 
 ---
 
