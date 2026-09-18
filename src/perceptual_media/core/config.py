@@ -66,6 +66,9 @@ class EccConfig:
     name: str = "bch"
     n: int = 127
     k: int = 64
+    repeat: int = 1
+    """Repeat the codeword this many times inside the channel (``n * repeat <= marker.n_bits``);
+    copies are soft-combined at decode. Lets a 127-bit code use a 256-bit channel."""
 
 
 @dataclass

@@ -21,11 +21,12 @@ from typing import Any
 
 import torch
 
-from perceptual_media.core.config import CorpusConfig, EccConfig, ExperimentConfig
+from perceptual_media.core.config import CorpusConfig, ExperimentConfig
 from perceptual_media.core.seed import make_generator, seed_everything
 from perceptual_media.core.types import ImageBatch
 from perceptual_media.corpus.manifest import iter_images
 from perceptual_media.distort.presets import build_chain
+from perceptual_media.harness.ecc import build_ecc
 from perceptual_media.harness.results import (
     ResultRow,
     ResultWriter,
@@ -91,20 +92,6 @@ def load_corpus(cfg: CorpusConfig, seed: int = 0) -> Iterator[CorpusImage]:
     if cfg.limit is not None:
         images = (im for _, im in zip(range(cfg.limit), images, strict=False))  # truncates on purpose
     yield from images
-
-
-def build_ecc(cfg: EccConfig | None, marker_bits: int) -> Any:
-    """Instantiate the configured ECC (or ``None``) and check it matches the marker's channel width."""
-    if cfg is None:
-        return None
-    if cfg.name != "bch":
-        raise KeyError(f"unknown ecc {cfg.name!r}; available: ['bch']")
-    from perceptual_media.markers.classical.bch import BCHCode  # numba import, deferred
-
-    ecc = BCHCode(cfg.n, cfg.k)
-    if ecc.n != marker_bits:
-        raise ValueError(f"ecc n={ecc.n} must equal marker.n_bits={marker_bits}")
-    return ecc
 
 
 def _sync(device: torch.device) -> None:

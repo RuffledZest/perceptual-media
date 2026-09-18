@@ -1,0 +1,41 @@
+# Week-3 learned baseline (Video Seal 1.0, 256 bits), one distortion axis at a time (deterministic in severity):
+# Strength scales the model residual (1.0 = its default). ECC: BCH(127,64) x2 soft-combined in 256 bits.
+#   jpeg_fixed: Q = 100 - 75 * severity           resize_fixed: scale = 1 - 0.6 * severity
+name: videoseal_isolated
+seed: 0
+
+corpus:
+  manifest: data/corpus/manifest.csv
+
+marker:
+  name: videoseal
+  n_bits: 256
+  params: {}
+
+ecc: {name: bch, n: 127, k: 64, repeat: 2}   # same message + inner code as classical; 2 soft-combined copies fill the 256-bit channel
+
+distortions:
+  - {preset: perspective_fixed, severity: 0.0}
+  - {preset: perspective_fixed, severity: 0.0167}   # 1 deg
+  - {preset: perspective_fixed, severity: 0.05}     # 3 deg
+  - {preset: perspective_fixed, severity: 0.1}      # 6 deg
+  - {preset: perspective_fixed, severity: 0.25}     # 15 deg
+  - {preset: perspective_fixed, severity: 0.5}      # 30 deg
+  - {preset: perspective_fixed, severity: 0.75}     # 45 deg
+  - {preset: defocus_fixed, severity: 0.17}         # 0.5 px
+  - {preset: defocus_fixed, severity: 0.33}         # 1.0 px
+  - {preset: defocus_fixed, severity: 0.5}          # 1.5 px
+  - {preset: defocus_fixed, severity: 0.67}         # 2.0 px
+  - {preset: defocus_fixed, severity: 0.83}         # 2.5 px
+  - {preset: defocus_fixed, severity: 1.0}          # 3.0 px
+  - {preset: jpeg_fixed, severity: 0.33}            # Q75
+  - {preset: jpeg_fixed, severity: 0.67}            # Q50
+  - {preset: jpeg_fixed, severity: 1.0}             # Q25
+  - {preset: resize_fixed, severity: 0.5}           # 0.7
+  - {preset: resize_fixed, severity: 1.0}           # 0.4
+
+strengths: [1.0]
+control: true
+force_embed: true
+output_dir: outputs
+device: auto

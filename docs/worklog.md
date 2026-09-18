@@ -116,5 +116,23 @@ Tooling: `ruff` (E,F,W,I,B,UP,SIM) and `vulture`. Findings and actions:
 anything hard to revert go on a branch (`week3-videoseal` first) and merge when the suite
 passes there. Result writeups only reference runs made from committed `main` hashes.
 
-**Next:** Phase 3 / Week 3 on branch `week3-videoseal` — Task 20 (Video Seal install +
-reproduce) → Task 21 (`VideoSealMarker`) → Task 22 (same sweep, compare via `summary.json`).
+**Week 3 (branch `week3-videoseal`, Tasks 20–22, Checkpoint W3).**
+- Video Seal 1.0.1 from PyPI as an optional extra; `decord` overridden via `[tool.uv]
+  override-dependencies`; `requests` added (used, undeclared). Its loader is cwd-relative, so the
+  adapter builds the model itself from the installed card + a vendored `attenuation.yaml`, with
+  the checkpoint cached under `~/.cache/perceptual_media/videoseal/`.
+- The image card's column 0 is not a trained presence channel (≈ 0.1 marked or not); presence
+  score = mean |message logit| (≈ 11 vs ≈ 0.4). Recorded in the adapter docstring.
+- ECC generalised: `ChannelCode` (inner BCH + repetition + zero-pad) so the 64-bit message and
+  BCH(127,64) are identical across a 127-bit and a 256-bit channel (2 soft-combined copies).
+- `pm-compare` overlays runs from `summary.json`; `read_results` tolerates columns added after
+  a run was written (schema evolution) so Week-2 CSVs still load.
+- Result (`docs/results/week3_learned.md`): perspective cliff 1° → ~15° (recovery 96 % at 3°,
+  37 % at 15 °, 0 at 30 °); both camera chains dead at severity ≥ 0.5; PSNR 45.4 / LPIPS 0.003 on
+  photos reproduces the published 45.75 / 0.003; flat-image JPEG failure recurs (49 % at Q75)
+  from a second, independent perceptual attenuation; procedural textures are out of
+  distribution (13–24 % BER undistorted). 0 false recoveries in 3,015 control trials.
+
+**Next:** merge `week3-videoseal` → `main`; Phase 4 / Week 4 (physical capture) — Task 23
+capture protocol + logger, Task 24 print sheets, Task 25 ingestion, Task 26 2AFC tool. The user
+will supply phone captures of six named corpus images once Phase 3 is closed.

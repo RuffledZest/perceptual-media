@@ -326,7 +326,7 @@ correlations (soft LLRs) and a global normalised-correlation detection score.
 - **Fallback:** if Video Seal is unsuitable, StegaStamp in a TF1.x container — budget 2 days max before deciding.
 
 ### Checkpoint — Week 3
-- [ ] Learned vs classical on identical sweep; the gap is measured, not assumed.
+- [x] Learned vs classical on identical sweep; the gap is measured, not assumed.
 
 ---
 
