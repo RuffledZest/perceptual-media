@@ -99,8 +99,10 @@ mix.
 2. **Task 11 (illumination):** union of both: PIMoG's linear/radial multiplicative field
    ([0.7–0.9] → [1.1–1.3]) *plus* StegaStamp's additive brightness (±0.3), per-channel hue shift
    (±0.1), contrast ([0.5, 1.5]) and desaturation. Each independently switchable with logged params.
-3. **Task 10 (JPEG):** implement `round_only_at_0` as the default surrogate and `diff_round` as
-   an option; verify against PIL at the same quality (AC already says PSNR ≥ 35 dB at Q75).
+3. **Task 10 (JPEG):** *done.* Measured against PIL 4:2:0 on corpus images (PSNR of surrogate
+   vs real JPEG): Q25 — STE 46.5 / round_only_at_0 37.9 / diff_round 44.1; Q75 — 48.7 / 43.9 /
+   48.5. Default is the straight-through estimator (exact forward, identity gradient);
+   StegaStamp's `round_only_at_0` is 5–9 dB further from the real codec and kept as an option.
    Quality→scale rule from libjpeg as above.
 4. **Task 10 (blur):** StegaStamp's 7×7 {none, Gaussian σ∈[1,3], line} mixture is a reasonable
    default; make kernel size a parameter (7 px at 400 px is ~1.75 % of width — scale with

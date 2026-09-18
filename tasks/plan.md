@@ -211,9 +211,9 @@ Resize (down→up), Crop (random rectangle, with pad-back so shapes stay fixed).
 differentiable approximation for later training — plus defocus (Gaussian) and motion blur.
 
 **Acceptance criteria:**
-- [ ] `JPEG(quality, differentiable=False)` matches PIL output at that quality (4:2:0) exactly
-- [ ] `JPEG(differentiable=True)` (DCT + soft-rounding) is within PSNR ≥ 35 dB of the real path at Q=75 and passes the gradient test
-- [ ] `DefocusBlur(sigma)` and `MotionBlur(length, angle)`; motion blur at angle 0, length L equals a 1×L box filter
+- [x] `JPEG(quality, differentiable=False)` matches PIL output at that quality (4:2:0) exactly
+- [x] `JPEG(differentiable=True)` (DCT + soft-rounding) is within PSNR ≥ 35 dB of the real path at Q=75 and passes the gradient test
+- [x] `DefocusBlur(sigma)` and `MotionBlur(length, angle)`; motion blur at angle 0, length L equals a 1×L box filter
 
 **Verification:** `uv run pytest tests/distort/test_jpeg.py tests/distort/test_blur.py -q`
 **Dependencies:** Task 9. **Files:** `distort/{jpeg,blur}.py`, tests. **Scope:** M
