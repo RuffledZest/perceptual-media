@@ -1,5 +1,6 @@
-# Smoke test for the harness: NullMarker through identity + both channel presets.
-# Expected: BER ~0.5 everywhere, AUC ~0.5, every ResultRow column populated.
+# Smoke test for the harness: NullMarker through the identity chain.
+# Expected: BER ~0.5, AUC ~0.5, every ResultRow column populated (fidelity from Task 7).
+# print_camera / screen_camera presets are added here in Task 12.
 name: smoke
 seed: 0
 
@@ -14,10 +15,6 @@ marker:
 distortions:
   - preset: identity
     severity: 0.0
-  - preset: print_camera
-    severity: 0.5
-  - preset: screen_camera
-    severity: 0.5
 
 strengths: [1.0]
 control: true

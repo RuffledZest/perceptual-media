@@ -154,18 +154,18 @@ for control), distort, decode, time, emit a row. First version uses in-memory sy
 an `Identity` distortion so it can run before the corpus and distortion modules exist.
 
 **Acceptance criteria:**
-- [ ] `harness/runner.py::run_experiment(cfg) -> Path` writes a run dir via `ResultWriter`
-- [ ] Runs *both* `marked=True` and `marked=False` (control) rows for every image when `cfg.control=True` (default)
-- [ ] `uv run pm-run configs/experiments/smoke.yaml` (entry point replaces the hello-world `main`) completes in < 30 s on CPU and produces ≥ 20 rows with BER in 0.35–0.65 and non-zero `encode_ms`/`decode_ms`
-- [ ] Fidelity columns are `NaN` until Task 7 lands (documented)
+- [x] `harness/runner.py::run_experiment(cfg) -> Path` writes a run dir via `ResultWriter`
+- [x] Runs *both* `marked=True` and `marked=False` (control) rows for every image when `cfg.control=True` (default)
+- [x] `uv run pm-run configs/experiments/smoke.yaml` (entry point replaces the hello-world `main`) completes in < 30 s on CPU and produces ≥ 20 rows with BER in 0.35–0.65 and non-zero `encode_ms`/`decode_ms`
+- [x] Fidelity columns are `NaN` until Task 7 lands (documented)
 
 **Verification:** `uv run pytest tests/harness/test_runner.py -q`; manual: inspect `outputs/smoke-*/results.csv`
 **Dependencies:** Tasks 2, 3, 4, 5. **Files:** `harness/{runner,cli}.py`, `pyproject.toml` (scripts), `tests/harness/test_runner.py`. **Scope:** M
 
 ### Checkpoint A — end-to-end pipeline exists
-- [ ] `uv run pytest` green
-- [ ] `pm-run smoke.yaml` produces a CSV with marked + control rows, BER ≈ 0.5
-- [ ] Review: does `ResultRow` cover everything §6 asks for? Fix now, not later.
+- [x] `uv run pytest` green
+- [x] `pm-run smoke.yaml` produces a CSV with marked + control rows, BER ≈ 0.5
+- [x] Review: does `ResultRow` cover everything §6 asks for? Yes — all 13 §6 fields plus run_id/seed/marked; verified by test.
 
 #### Task 7: Fidelity metrics — PSNR, SSIM, LPIPS
 **Description:** The perceptual-distance half of the metrics module. Batched, returns per-item.
