@@ -23,6 +23,7 @@ import torch
 from perceptual_media.core.config import CorpusConfig, ExperimentConfig
 from perceptual_media.core.seed import make_generator, seed_everything
 from perceptual_media.core.types import ImageBatch
+from perceptual_media.corpus.manifest import iter_images
 from perceptual_media.distort.presets import build_chain
 from perceptual_media.harness.results import ResultRow, ResultWriter, make_run_dir, to_json
 from perceptual_media.markers.base import Marker, get_marker, random_payload
@@ -68,10 +69,14 @@ def builtin_smoke_corpus(seed: int = 0, size: int = 64, n_per_class: int = 2) ->
 
 
 def load_corpus(cfg: CorpusConfig, seed: int = 0) -> Iterator[CorpusImage]:
-    """Yield images per ``CorpusConfig``. Manifest loading arrives in Task 8; until then the
-    built-in smoke corpus is used and a warning says so."""
+    """Yield images per ``CorpusConfig`` from the manifest (``pm-corpus build``).
+
+    If the manifest does not exist, falls back to the built-in smoke corpus with a warning.
+    """
     if Path(cfg.manifest).exists():
-        raise NotImplementedError("manifest corpora arrive in Task 8")
+        for row, img in iter_images(cfg.manifest, cfg.classes, cfg.limit):
+            yield CorpusImage(row.image_id, row.image_class, img)
+        return
     warnings.warn(f"manifest {cfg.manifest!r} not found; using built-in smoke corpus", stacklevel=2)
     images: Iterable[CorpusImage] = builtin_smoke_corpus(seed)
     if cfg.classes is not None:

@@ -185,10 +185,10 @@ a manifest that assigns every image a class. Photographic and face images are in
 user-supplied folder, not downloaded.
 
 **Acceptance criteria:**
-- [ ] `corpus/synth.py` produces at 512×512: `flat` (≥6 solid fills spanning luminance and brand-like colours), `gradient` (linear + radial, ≥4), `text` (≥4 PIL-rendered document/poster layouts), `textured` (≥6 procedural: Perlin-style noise, stripes, checker, mixed-frequency)
-- [ ] `corpus/build.py` CLI `uv run pm-corpus build --seed 0 --out data/corpus [--photos DIR] [--faces DIR]` writes PNGs + `manifest.csv` (`image_id, image_class, source, path, width, height`)
-- [ ] Same seed → byte-identical PNGs (test hashes two builds)
-- [ ] `corpus/manifest.py::load_manifest()` returns rows; runner iterates the manifest instead of in-memory images
+- [x] `corpus/synth.py` produces at 512×512: `flat` (≥6 solid fills spanning luminance and brand-like colours), `gradient` (linear + radial, ≥4), `text` (≥4 PIL-rendered document/poster layouts), `textured` (≥6 procedural: Perlin-style noise, stripes, checker, mixed-frequency)
+- [x] `corpus/build.py` CLI `uv run pm-corpus build --seed 0 --out data/corpus [--photos DIR] [--faces DIR]` writes PNGs + `manifest.csv` (`image_id, image_class, source, path, width, height`)
+- [x] Same seed → byte-identical PNGs (test hashes two builds)
+- [x] `corpus/manifest.py::load_manifest()` returns rows; runner iterates the manifest instead of in-memory images
 
 **Verification:** `uv run pytest tests/corpus -q`; manual: open `data/corpus/` and eyeball each class
 **Dependencies:** Task 6. **Files:** `corpus/{synth,build,manifest}.py`, `harness/runner.py`, `pyproject.toml` (script), `tests/corpus/test_synth.py`. **Scope:** M

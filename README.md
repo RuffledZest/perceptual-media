@@ -10,6 +10,7 @@ brief and `tasks/plan.md` for the build plan.
 ```
 uv sync                                        # deps (CUDA torch on Windows via cu130 index)
 uv run pytest                                  # test suite
+uv run pm-corpus build                         # build data/corpus (synthetic + photos from configs/paths.yaml)
 uv run pm-run configs/experiments/smoke.yaml   # run an experiment -> outputs/<name>-<stamp>/results.csv
 ```
 

@@ -1,4 +1,5 @@
 import time
+import warnings
 from pathlib import Path
 
 import pytest
@@ -100,8 +101,10 @@ def test_trial_seed_stable_and_sensitive() -> None:
     assert 0 <= s < 2**32
 
 
-def test_cli_smoke_config(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    with pytest.warns(UserWarning):
+def test_cli_smoke_config(tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(REPO)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")  # fallback warning only if data/corpus is not built
         rc = main([str(REPO / "configs" / "experiments" / "smoke.yaml"), "--output-dir", str(tmp_path), "--device", "cpu"])
     assert rc == 0
     out = capsys.readouterr().out
