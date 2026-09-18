@@ -1,7 +1,14 @@
 import torch
 
 from perceptual_media.core.seed import make_generator
-from perceptual_media.markers.classical.dct import MID_BAND, band_mask, blocks, from_luma_dct, luma_dct, unblocks
+from perceptual_media.markers.classical.dct import (
+    MID_BAND,
+    band_mask,
+    blocks,
+    from_luma_dct,
+    luma_dct,
+    unblocks,
+)
 
 
 def test_luma_dct_roundtrip_multiple_of_8() -> None:

@@ -6,7 +6,12 @@ from perceptual_media.distort.basic import GaussianNoise
 from perceptual_media.distort.jpeg import JPEG
 from perceptual_media.distort.perspective import Perspective
 from perceptual_media.harness.runner import builtin_smoke_corpus
-from perceptual_media.markers.base import CapacityError, Marker, get_marker, random_payload
+from perceptual_media.markers.base import (
+    CapacityError,
+    Marker,
+    get_marker,
+    random_payload,
+)
 from perceptual_media.markers.classical.spread_spectrum import ClassicalSSMarker
 from perceptual_media.metrics.decoding import auc, ber
 from perceptual_media.metrics.fidelity import psnr

@@ -2,7 +2,12 @@ import pytest
 import torch
 
 from perceptual_media.core.seed import make_generator
-from perceptual_media.distort.blur import DefocusBlur, MotionBlur, gaussian_kernel, motion_kernel
+from perceptual_media.distort.blur import (
+    DefocusBlur,
+    MotionBlur,
+    gaussian_kernel,
+    motion_kernel,
+)
 
 
 def test_motion_kernel_angle_zero_is_box() -> None:

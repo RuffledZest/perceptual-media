@@ -55,6 +55,9 @@ class ResultRow:
     lpips: float = math.nan
     encode_ms: float = math.nan
     decode_ms: float = math.nan
+    capacity_bits: float = math.nan
+    """``marker.capacity(img)`` for the *original* image, or NaN if the scheme has no estimate.
+    Added after Week 2: the classical estimator's failure on flat images was invisible without it."""
 
     @staticmethod
     def columns() -> list[str]:
@@ -80,6 +83,7 @@ _DTYPES: dict[str, Any] = {
     "lpips": "float64",
     "encode_ms": "float64",
     "decode_ms": "float64",
+    "capacity_bits": "float64",
 }
 
 
@@ -164,6 +168,45 @@ class ResultWriter:
             self._fh.close()
             self._fh = None
             self._writer = None
+
+
+def write_summary(run_dir: str | Path) -> Path:
+    """Per-chain x severity summary of a run as ``summary.json`` (file-based comparison across runs).
+
+    Keys per entry: ``n_marked``, ``n_control``, ``ber``, ``ber_control``, ``recovery``,
+    ``recovery_control`` (false positives), ``auc``, ``tpr_at_1pct_fpr`` (NaN without controls),
+    ``psnr``, ``ssim``, ``lpips``, ``encode_ms``, ``decode_ms``.
+    """
+    from perceptual_media.metrics.decoding import (  # avoid import cycle at module load
+        roc,
+        tpr_at_fpr,
+    )
+
+    run_dir = Path(run_dir)
+    df = read_results(run_dir)
+    df = df.assign(severity=df["distortion_params"].map(lambda p: json.loads(p or "{}").get("severity", 0.0)))
+    out: dict[str, Any] = {"run_id": str(df["run_id"].iloc[0]) if len(df) else run_dir.name, "rows": int(len(df)), "chains": []}
+    for (chain, sev), g in df.groupby(["distortion_chain", "severity"], sort=False):
+        m, c = g[g["marked"]], g[~g["marked"]]
+        entry: dict[str, Any] = {
+            "chain": str(chain), "severity": float(sev),
+            "n_marked": int(len(m)), "n_control": int(len(c)),
+            "ber": float(m["ber"].mean()) if len(m) else math.nan,
+            "recovery": float(m["payload_recovered"].mean()) if len(m) else math.nan,
+            "ber_control": float(c["ber"].mean()) if len(c) else math.nan,
+            "recovery_control": float(c["payload_recovered"].mean()) if len(c) else math.nan,
+            "psnr": float(m["psnr"].mean()), "ssim": float(m["ssim"].mean()), "lpips": float(m["lpips"].mean()),
+            "encode_ms": float(m["encode_ms"].mean()), "decode_ms": float(g["decode_ms"].mean()),
+            "auc": math.nan, "tpr_at_1pct_fpr": math.nan,
+        }
+        if len(m) and len(c):
+            pos, neg = m["detector_score"].to_numpy(), c["detector_score"].to_numpy()
+            entry["auc"] = roc(pos, neg)[2]
+            entry["tpr_at_1pct_fpr"] = tpr_at_fpr(pos, neg, 0.01)
+        out["chains"].append(entry)
+    path = run_dir / "summary.json"
+    path.write_text(json.dumps(out, indent=2, allow_nan=True), encoding="utf-8")
+    return path
 
 
 def read_results(run_dir_or_csv: str | Path) -> pd.DataFrame:

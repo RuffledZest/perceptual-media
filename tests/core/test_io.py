@@ -6,7 +6,11 @@ import torch
 
 from perceptual_media.core.io import from_uint8, load_image, save_image, to_uint8
 from perceptual_media.core.seed import make_generator
-from perceptual_media.core.types import ConventionError, assert_image_batch, assert_payload
+from perceptual_media.core.types import (
+    ConventionError,
+    assert_image_batch,
+    assert_payload,
+)
 
 
 def test_from_uint8_shape_dtype_range() -> None:

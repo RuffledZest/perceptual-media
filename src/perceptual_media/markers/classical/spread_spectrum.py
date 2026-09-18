@@ -36,10 +36,25 @@ import math
 import torch
 
 from perceptual_media.core.seed import make_generator
-from perceptual_media.core.types import ImageBatch, Payload, assert_image_batch, assert_payload
+from perceptual_media.core.types import (
+    ImageBatch,
+    Payload,
+    assert_image_batch,
+    assert_payload,
+)
 from perceptual_media.markers.base import CapacityError, DecodeResult, register_marker
-from perceptual_media.markers.classical.dct import band_mask, blocks, from_luma_dct, luma_dct, unblocks
-from perceptual_media.markers.classical.watson import DEFAULT_VIEWING, ViewingCondition, watson_slack
+from perceptual_media.markers.classical.dct import (
+    band_mask,
+    blocks,
+    from_luma_dct,
+    luma_dct,
+    unblocks,
+)
+from perceptual_media.markers.classical.watson import (
+    DEFAULT_VIEWING,
+    ViewingCondition,
+    watson_slack,
+)
 
 
 class _ChipPlan:

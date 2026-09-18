@@ -19,7 +19,7 @@ from perceptual_media.harness.results import (
 BRIEF_S6_FIELDS = [
     "run_id", "seed", "image_id", "image_class", "marked", "n_payload_bits", "embed_strength",
     "distortion_chain", "distortion_params", "capture_conditions", "ber", "payload_recovered",
-    "detector_score", "psnr", "ssim", "lpips", "encode_ms", "decode_ms",
+    "detector_score", "psnr", "ssim", "lpips", "encode_ms", "decode_ms", "capacity_bits",
 ]
 
 
@@ -34,7 +34,7 @@ def _row(i: int, marked: bool = True) -> ResultRow:
     )
 
 
-def test_schema_matches_brief_section_6_exactly() -> None:
+def test_schema_matches_brief_section_6_plus_capacity() -> None:
     assert ResultRow.columns() == BRIEF_S6_FIELDS
 
 

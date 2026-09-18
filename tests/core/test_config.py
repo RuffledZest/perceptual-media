@@ -22,7 +22,7 @@ def test_smoke_yaml_loads_into_nested_dataclasses() -> None:
     assert isinstance(cfg, ExperimentConfig)
     assert cfg.name == "smoke"
     assert cfg.marker.name == "null" and cfg.marker.n_bits == 64
-    assert cfg.corpus.limit == 8 and cfg.corpus.classes is None
+    assert cfg.corpus.per_class == 2 and cfg.corpus.limit is None and cfg.corpus.classes is None
     assert [d.preset for d in cfg.distortions] == ["identity", "print_camera", "screen_camera"]
     assert isinstance(cfg.distortions[1], DistortionConfig)
     assert cfg.distortions[1].severity == 0.5

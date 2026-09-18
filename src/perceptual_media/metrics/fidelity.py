@@ -9,7 +9,6 @@ logged because every paper reports them; the 2AFC study is the ground truth.
 
 from __future__ import annotations
 
-import math
 import warnings
 
 import torch
@@ -108,6 +107,3 @@ def fidelity(a: ImageBatch, b: ImageBatch) -> dict[str, torch.Tensor]:
     """All three metrics at once: ``{"psnr", "ssim", "lpips"}`` each ``(B,)``."""
     return {"psnr": psnr(a, b), "ssim": ssim(a, b), "lpips": lpips(a, b)}
 
-
-def is_finite_psnr(v: float) -> bool:
-    return math.isfinite(v) and v < PSNR_MAX

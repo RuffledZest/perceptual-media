@@ -26,10 +26,14 @@ import torch.nn.functional as F
 from PIL import Image
 
 from perceptual_media.core.io import from_uint8, to_uint8
-from perceptual_media.core.transforms import block_dct, block_idct, rgb_to_ycbcr, ycbcr_to_rgb
+from perceptual_media.core.transforms import (
+    block_dct,
+    block_idct,
+    rgb_to_ycbcr,
+    ycbcr_to_rgb,
+)
 from perceptual_media.core.types import ImageBatch
-from perceptual_media.distort.base import Distortion
-from perceptual_media.distort.basic import _uniform
+from perceptual_media.distort.base import Distortion, uniform
 
 Rounding = Literal["ste", "round_only_at_0", "diff_round"]
 
@@ -150,7 +154,7 @@ class JPEG(Distortion):
         self.q_min, self.q_max, self.differentiable, self.rounding = q_min, q_max, differentiable, rounding
 
     def _distort(self, x: ImageBatch, gen: torch.Generator) -> ImageBatch:
-        quality = _uniform(self.q_min, self.q_max, gen)
+        quality = uniform(self.q_min, self.q_max, gen)
         self.last_params = {"quality": quality, "differentiable": self.differentiable}
         if quality >= 100:
             return x

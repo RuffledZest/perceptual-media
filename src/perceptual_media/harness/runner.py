@@ -26,7 +26,13 @@ from perceptual_media.core.seed import make_generator, seed_everything
 from perceptual_media.core.types import ImageBatch
 from perceptual_media.corpus.manifest import iter_images
 from perceptual_media.distort.presets import build_chain
-from perceptual_media.harness.results import ResultRow, ResultWriter, make_run_dir, to_json
+from perceptual_media.harness.results import (
+    ResultRow,
+    ResultWriter,
+    make_run_dir,
+    to_json,
+    write_summary,
+)
 from perceptual_media.markers.base import Marker, get_marker, random_payload
 from perceptual_media.metrics.decoding import ber, payload_recovered
 from perceptual_media.metrics.fidelity import fidelity
@@ -75,7 +81,7 @@ def load_corpus(cfg: CorpusConfig, seed: int = 0) -> Iterator[CorpusImage]:
     If the manifest does not exist, falls back to the built-in smoke corpus with a warning.
     """
     if Path(cfg.manifest).exists():
-        for row, img in iter_images(cfg.manifest, cfg.classes, cfg.limit):
+        for row, img in iter_images(cfg.manifest, cfg.classes, cfg.limit, cfg.per_class):
             yield CorpusImage(row.image_id, row.image_class, img)
         return
     warnings.warn(f"manifest {cfg.manifest!r} not found; using built-in smoke corpus", stacklevel=2)
@@ -83,7 +89,7 @@ def load_corpus(cfg: CorpusConfig, seed: int = 0) -> Iterator[CorpusImage]:
     if cfg.classes is not None:
         images = (im for im in images if im.image_class in cfg.classes)
     if cfg.limit is not None:
-        images = (im for _, im in zip(range(cfg.limit), images))
+        images = (im for _, im in zip(range(cfg.limit), images, strict=False))  # truncates on purpose
     yield from images
 
 
@@ -114,8 +120,58 @@ def _timed(fn, device: torch.device):  # type: ignore[no-untyped-def]
     return out, (time.perf_counter() - t0) * 1000.0
 
 
+@dataclass
+class _Trial:
+    """Everything one embed->distort->decode needs, bound explicitly (no loop-variable closures)."""
+
+    item: CorpusImage
+    strength: float
+    dcfg: Any
+    seed: int
+    message: torch.Tensor
+    payload: torch.Tensor
+    capacity_bits: float
+
+
+def _run_trial(t: _Trial, *, marked: bool, marker: Marker, ecc: Any, chain: Any, cfg: ExperimentConfig, device: torch.device, writer: ResultWriter, run_id: str, n_message_bits: int) -> None:
+    x = t.item.image.to(device)
+    enc_ms = math.nan
+    fid: dict[str, float] = {}
+    if marked:
+        original = x
+        x, enc_ms = _timed(lambda: marker.embed(original, t.payload, t.strength, force=cfg.force_embed), device)
+        # Fidelity is marked-vs-original, before the channel.
+        fid = {k: float(v[0]) for k, v in fidelity(x, original).items()}
+    # Same distortion seed for marked and control -> identical sampled params.
+    x = chain(x, make_generator(t.seed ^ 0x5BD1E995, device.type))
+    res, dec_ms = _timed(lambda: marker.decode(x), device)
+    writer.write(
+        ResultRow(
+            run_id=run_id,
+            seed=t.seed,
+            image_id=t.item.image_id,
+            image_class=t.item.image_class,
+            marked=marked,
+            n_payload_bits=n_message_bits,
+            embed_strength=t.strength if marked else 0.0,
+            distortion_chain=chain.name,
+            distortion_params=to_json({"severity": t.dcfg.severity, **chain.last_params}),
+            capture_conditions="",
+            ber=float(ber(res.llrs, t.payload)[0]),
+            payload_recovered=bool(payload_recovered(res.llrs, t.message, ecc=ecc)[0]),
+            detector_score=float(res.score[0]),
+            psnr=fid.get("psnr", math.nan),
+            ssim=fid.get("ssim", math.nan),
+            lpips=fid.get("lpips", math.nan),
+            encode_ms=enc_ms,
+            decode_ms=dec_ms,
+            capacity_bits=t.capacity_bits,
+        )
+    )
+
+
 def run_experiment(cfg: ExperimentConfig, corpus: Iterable[CorpusImage] | None = None) -> Path:
-    """Run ``cfg`` and return the run directory containing ``results.csv``."""
+    """Run ``cfg`` and return the run directory containing ``results.csv`` and ``summary.json``."""
     seed_everything(cfg.seed)
     device = resolve_device(cfg.device)
     marker: Marker = get_marker(cfg.marker.name, cfg.marker.n_bits, **cfg.marker.params)
@@ -127,49 +183,18 @@ def run_experiment(cfg: ExperimentConfig, corpus: Iterable[CorpusImage] | None =
 
     with ResultWriter(run_dir, cfg) as writer:
         for item in images:
-            img = item.image.to(device)
+            cap = marker.capacity(item.image.to(device))
+            capacity_bits = float(cap[0]) if cap is not None else math.nan
             for strength in cfg.strengths:
                 for dcfg in cfg.distortions:
                     chain = build_chain(dcfg.preset, dcfg.severity).to(device)
                     seed = trial_seed(cfg.seed, item.image_id, strength, dcfg.preset, dcfg.severity)
                     message = random_payload(1, n_message_bits, make_generator(seed)).to(device)
                     payload = ecc.encode(message) if ecc is not None else message  # channel bits
-
-                    def one(x: ImageBatch, marked: bool) -> None:
-                        enc_ms = math.nan
-                        fid: dict[str, float] = {}
-                        if marked:
-                            original = x
-                            x, enc_ms = _timed(lambda: marker.embed(original, payload, strength, force=cfg.force_embed), device)
-                            # Fidelity is marked-vs-original, before the channel.
-                            fid = {k: float(v[0]) for k, v in fidelity(x, original).items()}
-                        # Same distortion seed for marked and control → identical sampled params.
-                        x = chain(x, make_generator(seed ^ 0x5BD1E995, device.type))
-                        res, dec_ms = _timed(lambda: marker.decode(x), device)
-                        writer.write(
-                            ResultRow(
-                                run_id=run_id,
-                                seed=seed,
-                                image_id=item.image_id,
-                                image_class=item.image_class,
-                                marked=marked,
-                                n_payload_bits=n_message_bits,
-                                embed_strength=strength if marked else 0.0,
-                                distortion_chain=chain.name,
-                                distortion_params=to_json({"severity": dcfg.severity, **chain.last_params}),
-                                capture_conditions="",
-                                ber=float(ber(res.llrs, payload)[0]),
-                                payload_recovered=bool(payload_recovered(res.llrs, message, ecc=ecc)[0]),
-                                detector_score=float(res.score[0]),
-                                psnr=fid.get("psnr", math.nan),
-                                ssim=fid.get("ssim", math.nan),
-                                lpips=fid.get("lpips", math.nan),
-                                encode_ms=enc_ms,
-                                decode_ms=dec_ms,
-                            )
-                        )
-
-                    one(img, marked=True)
+                    trial = _Trial(item, strength, dcfg, seed, message, payload, capacity_bits)
+                    common: dict[str, Any] = dict(marker=marker, ecc=ecc, chain=chain, cfg=cfg, device=device, writer=writer, run_id=run_id, n_message_bits=n_message_bits)
+                    _run_trial(trial, marked=True, **common)
                     if cfg.control:
-                        one(img, marked=False)
+                        _run_trial(trial, marked=False, **common)
+    write_summary(run_dir)
     return run_dir

@@ -2,7 +2,12 @@ import pytest
 import torch
 
 from perceptual_media.core.seed import make_generator
-from perceptual_media.distort.perspective import Perspective, homography_from_corners, pose_corners, warp
+from perceptual_media.distort.perspective import (
+    Perspective,
+    homography_from_corners,
+    pose_corners,
+    warp,
+)
 from perceptual_media.metrics.fidelity import psnr
 
 

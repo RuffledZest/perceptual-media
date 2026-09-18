@@ -94,5 +94,27 @@ coefficient pools to LPIPS 0.4–0.6 on flat/gradient images; the invisible oper
 s ≈ 0.1–0.25 where host interference already costs 3–5 % BER. Control set: 0 false
 recoveries in 2,412 trials, pilot z ~ N(0,1) as designed.
 
-**Next:** Phase 3 / Week 3 — Task 19 (GPU-if-available is already true; reduce to a check)
-→ Task 20 (Video Seal install + reproduce) → Task 21 (`VideoSealMarker`) → Task 22 (same sweep).
+**Audit before Week 3 (user request: verify, remove waste, check metrics fit the phase).**
+Tooling: `ruff` (E,F,W,I,B,UP,SIM) and `vulture`. Findings and actions:
+- `runner.py` inner closure captured loop variables (B023) — correct today, fragile by design;
+  refactored to an explicit `_Trial` dataclass + `_run_trial()`.
+- `_uniform` was a private helper imported across five modules → public `distort.base.uniform`.
+- `smoke.yaml` `limit: 8` selected eight *flat* images (manifest order). Added
+  `CorpusConfig.per_class`; smoke now takes 2 of each class.
+- Dead code removed: `fidelity.is_finite_psnr`. `Crop` kept (tested; reserved for Week-5
+  partial-capture work) and marked as such. Other `vulture` hits are dataclass fields, protocol
+  methods and extension APIs — false positives.
+- `zip(strict=…)` made explicit in three places; import order normalised (17 files).
+- Metrics vs phase: §6 set is complete for Phases 1–3. Two gaps Week 2 exposed, now closed:
+  `capacity_bits` column (the flat-image capacity failure was invisible in the CSV) and a
+  per-run `summary.json` (per chain × severity: BER, recovery, control BER/recovery, AUC,
+  TPR@1 % FPR, fidelity, timings) so Task 22's classical-vs-learned comparison is file-based.
+- Known limitation recorded: random draws differ between CPU and CUDA generators, so a run is
+  bit-reproducible on the same device type only. Every row still carries its seed and params.
+
+**Branch rule (from here on):** `main` is always green. Integrations of foreign code and
+anything hard to revert go on a branch (`week3-videoseal` first) and merge when the suite
+passes there. Result writeups only reference runs made from committed `main` hashes.
+
+**Next:** Phase 3 / Week 3 on branch `week3-videoseal` — Task 20 (Video Seal install +
+reproduce) → Task 21 (`VideoSealMarker`) → Task 22 (same sweep, compare via `summary.json`).

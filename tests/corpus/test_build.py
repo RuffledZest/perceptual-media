@@ -8,8 +8,20 @@ from PIL import Image
 
 from perceptual_media.core.config import CorpusConfig
 from perceptual_media.corpus.build import build_corpus, main
-from perceptual_media.corpus.manifest import CLASSES, ManifestRow, iter_images, load_manifest, write_manifest
-from perceptual_media.corpus.synth import all_synthetic, flat_images, gradient_images, text_images, textured_images
+from perceptual_media.corpus.manifest import (
+    CLASSES,
+    ManifestRow,
+    iter_images,
+    load_manifest,
+    write_manifest,
+)
+from perceptual_media.corpus.synth import (
+    all_synthetic,
+    flat_images,
+    gradient_images,
+    text_images,
+    textured_images,
+)
 from perceptual_media.harness.runner import load_corpus
 
 SIZE = 64
@@ -42,13 +54,13 @@ def test_synthetic_class_minimums_and_shapes() -> None:
     assert sum(1 for _ in textured_images(SIZE, gen)) >= 6
     for s in all_synthetic(SIZE, 0):
         assert s.image.shape == (1, 3, SIZE, SIZE) and s.image.dtype == torch.float32
-        assert 0 <= s.image.min() and s.image.max() <= 1
+        assert s.image.min() >= 0 and s.image.max() <= 1
         assert s.image_class in CLASSES
 
 
 def test_flat_images_are_truly_flat_and_text_has_edges() -> None:
     for s in flat_images(SIZE):
-        assert s.image.flatten(2).std(dim=2).max() == 0
+        assert s.image.flatten(2).std(dim=2).max().item() == 0.0
     for s in text_images(SIZE):
         assert s.image.std() > 0.05
 

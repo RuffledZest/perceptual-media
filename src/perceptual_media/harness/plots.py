@@ -69,7 +69,7 @@ def plot_ber_vs_severity(df: pd.DataFrame, run_dir: Path) -> Path:
     df = df.assign(severity=df["distortion_params"].map(_severity))
     chains = list(dict.fromkeys(df["distortion_chain"]))
     fig, axes = plt.subplots(1, len(chains), figsize=(4.2 * len(chains), 3.4), sharey=True, squeeze=False)
-    for ax, chain in zip(axes[0], chains):
+    for ax, chain in zip(axes[0], chains, strict=True):
         g = df[df["distortion_chain"] == chain]
         m = g[g["marked"]]
         for cls in [c for c in CLASSES if c in set(m["image_class"])]:

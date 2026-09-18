@@ -17,6 +17,13 @@ from torch import nn
 from perceptual_media.core.types import ImageBatch, assert_image_batch
 
 
+def uniform(lo: float, hi: float, gen: torch.Generator) -> float:
+    """One float ~ U(lo, hi) drawn from ``gen`` (on the generator's device). Every distortion
+    samples its parameters through this so a trial is replayable from its seed."""
+    u = torch.rand((), generator=gen, device=gen.device).item()
+    return lo + (hi - lo) * u
+
+
 class Distortion(nn.Module):
     """Base class. Subclasses set ``name`` and implement ``_distort``."""
 

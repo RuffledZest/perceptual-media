@@ -41,6 +41,8 @@ class CorpusConfig:
     """Take only the first ``limit`` manifest rows (after class filtering)."""
     classes: list[str] | None = None
     """Restrict to these ``image_class`` values; ``None`` = all."""
+    per_class: int | None = None
+    """Take at most this many images of each class (applied before ``limit``)."""
 
 
 @dataclass

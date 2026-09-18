@@ -32,7 +32,7 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 - [x] **Checkpoint W2** — reference line exists; stop tuning classical (2026-09-18: sync-limited at 1 deg; flat images fail JPEG alone)
 
 ## Phase 3 — Week 3: Learned baseline
-- [ ] Task 19: ~~CUDA torch build~~ (done in Task 0); GPU-if-available in harness
+- [x] Task 19: ~~CUDA torch build~~ (done in Task 0); GPU-if-available in harness (`device: auto` since Task 6; verified in audit 2026-09-18)
 - [ ] Task 20: Video Seal installed; published number reproduced; recorded
 - [ ] Task 21: `VideoSealMarker` adapter
 - [ ] Task 22: same sweep, overlaid on Week-2 plots

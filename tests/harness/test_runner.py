@@ -5,9 +5,14 @@ from pathlib import Path
 import pytest
 import torch
 
-from perceptual_media.core.config import DistortionConfig, ExperimentConfig, MarkerConfig, CorpusConfig
+from perceptual_media.core.config import (
+    CorpusConfig,
+    DistortionConfig,
+    ExperimentConfig,
+    MarkerConfig,
+)
 from perceptual_media.core.seed import make_generator
-from perceptual_media.harness.cli import main, summarize
+from perceptual_media.harness.cli import main
 from perceptual_media.harness.results import read_results
 from perceptual_media.harness.runner import (
     CorpusImage,
@@ -141,3 +146,25 @@ def test_runner_rejects_ecc_marker_mismatch(tmp_path: Path) -> None:
     cfg = _cfg(tmp_path, marker=MarkerConfig(name="null", n_bits=64), ecc=EccConfig("bch", 127, 64))
     with pytest.raises(ValueError, match="must equal marker.n_bits"):
         run_experiment(cfg)
+
+
+def test_summary_json_and_capacity_column(tmp_path: Path) -> None:
+    import json
+
+    corpus = [CorpusImage("a", "flat", torch.full((1, 3, 32, 32), 0.5)), CorpusImage("b", "textured", torch.rand(1, 3, 32, 32))]
+    run = run_experiment(_cfg(tmp_path, distortions=[DistortionConfig("identity", 0.0), DistortionConfig("print_camera", 0.5)]), corpus=corpus)
+    df = read_results(run)
+    assert df["capacity_bits"].isna().all()  # NullMarker has no estimate
+    s = json.loads((run / "summary.json").read_text())
+    assert s["rows"] == 8 and len(s["chains"]) == 2
+    for e in s["chains"]:
+        assert {"chain", "severity", "ber", "recovery", "ber_control", "recovery_control", "auc", "tpr_at_1pct_fpr", "lpips"} <= set(e)
+        assert e["n_marked"] == 2 and e["n_control"] == 2
+
+
+def test_per_class_selection() -> None:
+    from perceptual_media.corpus.manifest import ManifestRow, select_rows
+
+    rows = [ManifestRow(f"{c}{i}", c, "", "", 8, 8) for c in ("flat", "photo", "text") for i in range(3)]
+    assert [r.image_id for r in select_rows(rows, per_class=1)] == ["flat0", "photo0", "text0"]
+    assert [r.image_id for r in select_rows(rows, classes=["photo"], per_class=2, limit=1)] == ["photo0"]

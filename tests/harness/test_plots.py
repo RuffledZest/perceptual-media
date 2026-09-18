@@ -3,7 +3,12 @@ from pathlib import Path
 import pytest
 import torch
 
-from perceptual_media.core.config import CorpusConfig, DistortionConfig, ExperimentConfig, MarkerConfig
+from perceptual_media.core.config import (
+    CorpusConfig,
+    DistortionConfig,
+    ExperimentConfig,
+    MarkerConfig,
+)
 from perceptual_media.harness.plots import CLASS_STYLE, main, plot_run
 from perceptual_media.harness.runner import CorpusImage, run_experiment
 
@@ -42,5 +47,5 @@ def test_cli_and_fixed_class_colours(tmp_path: Path, capsys: pytest.CaptureFixtu
 
 def test_empty_results_is_an_error(tmp_path: Path) -> None:
     (tmp_path / "results.csv").write_text("run_id,seed\n")
-    with pytest.raises(Exception):
+    with pytest.raises((ValueError, KeyError)):
         plot_run(tmp_path)

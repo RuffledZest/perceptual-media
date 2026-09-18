@@ -15,7 +15,12 @@ from __future__ import annotations
 import torch
 import torch.nn.functional as F
 
-from perceptual_media.core.transforms import block_dct, block_idct, rgb_to_ycbcr, ycbcr_to_rgb
+from perceptual_media.core.transforms import (
+    block_dct,
+    block_idct,
+    rgb_to_ycbcr,
+    ycbcr_to_rgb,
+)
 from perceptual_media.core.types import ImageBatch, assert_image_batch
 
 

@@ -12,8 +12,7 @@ import torch
 import torch.nn.functional as F
 
 from perceptual_media.core.types import ImageBatch
-from perceptual_media.distort.base import Distortion
-from perceptual_media.distort.basic import _uniform
+from perceptual_media.distort.base import Distortion, uniform
 
 
 def _conv_same(x: ImageBatch, kernel: torch.Tensor) -> ImageBatch:
@@ -66,7 +65,7 @@ class DefocusBlur(Distortion):
         self.sigma_min, self.sigma_max, self.max_radius = sigma_min, sigma_max, max_radius
 
     def _distort(self, x: ImageBatch, gen: torch.Generator) -> ImageBatch:
-        sigma = _uniform(self.sigma_min, self.sigma_max, gen)
+        sigma = uniform(self.sigma_min, self.sigma_max, gen)
         self.last_params = {"sigma": sigma}
         if sigma < 0.05:
             return x
@@ -85,8 +84,8 @@ class MotionBlur(Distortion):
         self.length_min, self.length_max = length_min, length_max
 
     def _distort(self, x: ImageBatch, gen: torch.Generator) -> ImageBatch:
-        length = _uniform(self.length_min, self.length_max, gen)
-        angle = _uniform(0.0, 180.0, gen)
+        length = uniform(self.length_min, self.length_max, gen)
+        angle = uniform(0.0, 180.0, gen)
         self.last_params = {"length": length, "angle_deg": angle}
         if length <= 1.0:
             return x

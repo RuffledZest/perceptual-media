@@ -3,7 +3,12 @@ import torch
 from scipy.fft import dctn, idctn
 
 from perceptual_media.core.seed import make_generator
-from perceptual_media.core.transforms import block_dct, block_idct, rgb_to_ycbcr, ycbcr_to_rgb
+from perceptual_media.core.transforms import (
+    block_dct,
+    block_idct,
+    rgb_to_ycbcr,
+    ycbcr_to_rgb,
+)
 
 
 def test_block_dct_matches_scipy_every_block() -> None:

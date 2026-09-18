@@ -49,15 +49,28 @@ def load_manifest(path: str | Path) -> list[ManifestRow]:
         return [ManifestRow(r["image_id"], r["image_class"], r["source"], r["path"], int(r["width"]), int(r["height"])) for r in csv.DictReader(fh)]
 
 
-def iter_images(
-    manifest_path: str | Path, classes: list[str] | None = None, limit: int | None = None
-) -> Iterator[tuple[ManifestRow, ImageBatch]]:
-    """Yield ``(row, image)`` for manifest rows, optionally filtered by class and truncated."""
-    manifest_path = Path(manifest_path)
-    rows = load_manifest(manifest_path)
+def select_rows(rows: list[ManifestRow], classes: list[str] | None = None, per_class: int | None = None, limit: int | None = None) -> list[ManifestRow]:
+    """Filter by class, cap each class at ``per_class`` (manifest order), then truncate to ``limit``."""
     if classes is not None:
         rows = [r for r in rows if r.image_class in classes]
+    if per_class is not None:
+        seen: dict[str, int] = {}
+        kept = []
+        for r in rows:
+            if seen.get(r.image_class, 0) < per_class:
+                kept.append(r)
+                seen[r.image_class] = seen.get(r.image_class, 0) + 1
+        rows = kept
     if limit is not None:
         rows = rows[:limit]
+    return rows
+
+
+def iter_images(
+    manifest_path: str | Path, classes: list[str] | None = None, limit: int | None = None, per_class: int | None = None
+) -> Iterator[tuple[ManifestRow, ImageBatch]]:
+    """Yield ``(row, image)`` for manifest rows after ``select_rows``."""
+    manifest_path = Path(manifest_path)
+    rows = select_rows(load_manifest(manifest_path), classes, per_class, limit)
     for r in rows:
         yield r, load_image(manifest_path.parent / r.path)

@@ -3,7 +3,12 @@ import torch
 import torch.nn.functional as F
 
 from perceptual_media.core.seed import make_generator
-from perceptual_media.distort.moire import Moire, display_render, expected_beat_frequency, pimog_pattern
+from perceptual_media.distort.moire import (
+    Moire,
+    display_render,
+    expected_beat_frequency,
+    pimog_pattern,
+)
 
 
 def _dominant_freq(y: torch.Tensor) -> float:

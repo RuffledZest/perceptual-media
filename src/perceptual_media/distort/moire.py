@@ -24,8 +24,7 @@ import torch
 import torch.nn.functional as F
 
 from perceptual_media.core.types import ImageBatch
-from perceptual_media.distort.base import Distortion
-from perceptual_media.distort.basic import _uniform
+from perceptual_media.distort.base import Distortion, uniform
 from perceptual_media.distort.blur import _conv_same, gaussian_kernel
 
 Mode = Literal["sampling", "pimog"]
@@ -113,16 +112,16 @@ class Moire(Distortion):
             return x
         h, w = x.shape[-2:]
         if self.mode == "sampling":
-            s = _uniform(self.scale_min, self.scale_max, gen)
-            phase = (_uniform(0, 1, gen), _uniform(0, 1, gen))
-            rot = _uniform(-self.max_rotation_deg, self.max_rotation_deg, gen)
+            s = uniform(self.scale_min, self.scale_max, gen)
+            phase = (uniform(0, 1, gen), uniform(0, 1, gen))
+            rot = uniform(-self.max_rotation_deg, self.max_rotation_deg, gen)
             self.last_params = {"mode": "sampling", "capture_scale": s, "phase_x": phase[0], "phase_y": phase[1], "rotation_deg": rot, "psf_sigma": self.psf_sigma, "strength": self.strength}
             hi = display_render(x, self.up)
             sensor = sensor_sample(hi, self.up, s, phase, rot, self.psf_sigma)
             y = F.interpolate(sensor, size=(h, w), mode="bilinear", align_corners=False)
         else:
-            center = (_uniform(0, w, gen), _uniform(0, h, gen))
-            theta = _uniform(0, 180, gen)
+            center = (uniform(0, w, gen), uniform(0, h, gen))
+            theta = uniform(0, 180, gen)
             self.last_params = {"mode": "pimog", "center_x": center[0], "center_y": center[1], "theta_deg": theta, "amp": self.amp, "strength": self.strength}
             m = pimog_pattern(h, w, center, theta, x.device, x.dtype)
             y = x * (1 - self.amp) + self.amp * m

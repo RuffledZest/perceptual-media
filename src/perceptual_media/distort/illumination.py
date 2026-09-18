@@ -19,8 +19,7 @@ import math
 import torch
 
 from perceptual_media.core.types import ImageBatch
-from perceptual_media.distort.base import Distortion
-from perceptual_media.distort.basic import _uniform
+from perceptual_media.distort.base import Distortion, uniform
 
 
 def _light_field(h: int, w: int, a: float, b: float, kind: str, angle: float, cx: float, cy: float, device: torch.device, dtype: torch.dtype) -> torch.Tensor:
@@ -60,35 +59,35 @@ class Illumination(Distortion):
 
         # 1. light field
         if self.gain > 0:
-            a, b = _uniform(1 - self.gain, 1.0, gen), _uniform(1.0, 1 + self.gain, gen)
-            kind = "linear" if _uniform(0, 1, gen) < 0.5 else "radial"
-            angle, cx, cy = _uniform(0, 2 * math.pi, gen), _uniform(0, 1, gen), _uniform(0, 1, gen)
+            a, b = uniform(1 - self.gain, 1.0, gen), uniform(1.0, 1 + self.gain, gen)
+            kind = "linear" if uniform(0, 1, gen) < 0.5 else "radial"
+            angle, cx, cy = uniform(0, 2 * math.pi, gen), uniform(0, 1, gen), uniform(0, 1, gen)
             x = x * _light_field(h, w, a, b, kind, angle, cx, cy, x.device, x.dtype)
             p.update(gain_a=a, gain_b=b, field=kind, field_angle=angle, field_cx=cx, field_cy=cy)
         # 2. contrast
         if self.contrast > 0:
-            c = _uniform(1 - self.contrast, 1 + self.contrast, gen)
+            c = uniform(1 - self.contrast, 1 + self.contrast, gen)
             x = x * c
             p["contrast"] = c
         # 3. brightness + cast
         if self.brightness > 0:
-            bri = _uniform(-self.brightness, self.brightness, gen)
+            bri = uniform(-self.brightness, self.brightness, gen)
             x = x + bri
             p["brightness"] = bri
         if self.cast > 0:
-            cast = [_uniform(-self.cast, self.cast, gen) for _ in range(3)]
+            cast = [uniform(-self.cast, self.cast, gen) for _ in range(3)]
             x = x + torch.tensor(cast, device=x.device, dtype=x.dtype).view(1, 3, 1, 1)
             p.update(cast_r=cast[0], cast_g=cast[1], cast_b=cast[2])
         # 4. desaturation
         if self.saturation > 0:
-            s = _uniform(0, self.saturation, gen)
+            s = uniform(0, self.saturation, gen)
             lum = (0.299 * x[:, 0:1] + 0.587 * x[:, 1:2] + 0.114 * x[:, 2:3]).expand_as(x)
             x = (1 - s) * x + s * lum
             p["desaturate"] = s
         # 5. gamma (on the clamped signal; gamma of negatives is undefined)
         x = x.clamp(0, 1)
         if self.gamma > 0:
-            g = _uniform(1 / (1 + self.gamma), 1 + self.gamma, gen)
+            g = uniform(1 / (1 + self.gamma), 1 + self.gamma, gen)
             x = x.clamp_min(1e-6) ** g
             p["gamma"] = g
         self.last_params = p

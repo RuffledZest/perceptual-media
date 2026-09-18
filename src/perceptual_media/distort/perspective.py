@@ -23,8 +23,7 @@ import torch
 import torch.nn.functional as F
 
 from perceptual_media.core.types import ImageBatch
-from perceptual_media.distort.base import Distortion
-from perceptual_media.distort.basic import _uniform
+from perceptual_media.distort.base import Distortion, uniform
 
 Mode = Literal["pose", "corners"]
 
@@ -32,7 +31,7 @@ Mode = Literal["pose", "corners"]
 def homography_from_corners(src: torch.Tensor, dst: torch.Tensor) -> torch.Tensor:
     """DLT: ``(4, 2)`` source and destination points → ``(3, 3)`` H with ``dst ~ H @ src``, H[2,2] = 1."""
     rows = []
-    for (x, y), (u, v) in zip(src.tolist(), dst.tolist()):
+    for (x, y), (u, v) in zip(src.tolist(), dst.tolist(), strict=True):
         rows.append([x, y, 1, 0, 0, 0, -u * x, -u * y])
         rows.append([0, 0, 0, x, y, 1, -v * x, -v * y])
     a = torch.tensor(rows, dtype=torch.float64)
@@ -103,7 +102,7 @@ class Perspective(Distortion):
             if self.fixed:
                 tilt, yaw, roll = float(self.max_angle), 0.0, 0.0
             else:
-                tilt, yaw, roll = _uniform(-self.max_angle, self.max_angle, gen), _uniform(-self.max_angle, self.max_angle, gen), _uniform(-self.max_roll, self.max_roll, gen)
+                tilt, yaw, roll = uniform(-self.max_angle, self.max_angle, gen), uniform(-self.max_angle, self.max_angle, gen), uniform(-self.max_roll, self.max_roll, gen)
             dst = pose_corners(w, h, tilt, yaw, roll, self.fov_deg)
             self.last_params = {"mode": "pose", "tilt_deg": tilt, "yaw_deg": yaw, "roll_deg": roll, "fov_deg": self.fov_deg}
             if tilt == 0 and yaw == 0 and roll == 0:
@@ -111,7 +110,7 @@ class Perspective(Distortion):
                 return x
         else:
             d = self.jitter * w
-            dst = src + torch.tensor([[_uniform(-d, d, gen), _uniform(-d, d, gen)] for _ in range(4)], dtype=torch.float32)
+            dst = src + torch.tensor([[uniform(-d, d, gen), uniform(-d, d, gen)] for _ in range(4)], dtype=torch.float32)
             self.last_params = {"mode": "corners", "jitter_px": d, "corners": dst.tolist()}
             if d == 0:
                 self.last_H = torch.eye(3)

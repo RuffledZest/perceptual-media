@@ -21,7 +21,12 @@ from typing import Any, Protocol, runtime_checkable
 import torch
 
 from perceptual_media.core.seed import make_generator
-from perceptual_media.core.types import ImageBatch, Payload, assert_image_batch, assert_payload
+from perceptual_media.core.types import (
+    ImageBatch,
+    Payload,
+    assert_image_batch,
+    assert_payload,
+)
 
 
 class CapacityError(RuntimeError):

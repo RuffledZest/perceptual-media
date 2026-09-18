@@ -13,13 +13,7 @@ import torch
 import torch.nn.functional as F
 
 from perceptual_media.core.types import ImageBatch
-from perceptual_media.distort.base import Distortion
-
-
-def _uniform(lo: float, hi: float, gen: torch.Generator) -> float:
-    """One float ~ U(lo, hi) drawn from ``gen`` (on the generator's device)."""
-    u = torch.rand((), generator=gen, device=gen.device).item()
-    return lo + (hi - lo) * u
+from perceptual_media.distort.base import Distortion, uniform
 
 
 class GaussianNoise(Distortion):
@@ -32,7 +26,7 @@ class GaussianNoise(Distortion):
         self.sigma_max = sigma_max
 
     def _distort(self, x: ImageBatch, gen: torch.Generator) -> ImageBatch:
-        sigma = _uniform(0.0, self.sigma_max, gen)
+        sigma = uniform(0.0, self.sigma_max, gen)
         self.last_params = {"sigma": sigma}
         if sigma == 0:
             return x
@@ -55,7 +49,7 @@ class Resize(Distortion):
         self.scale_min, self.scale_max = scale_min, scale_max
 
     def _distort(self, x: ImageBatch, gen: torch.Generator) -> ImageBatch:
-        scale = _uniform(self.scale_min, self.scale_max, gen)
+        scale = uniform(self.scale_min, self.scale_max, gen)
         self.last_params = {"scale": scale}
         if scale >= 1.0:
             return x
@@ -69,7 +63,8 @@ class Crop(Distortion):
     """Keep a random axis-aligned rectangle covering ``area ~ U(area_min, area_max)`` of the
     image; everything outside is replaced by ``fill``. Position is random. The rectangle stays
     where it was (no re-centering), so geometry is preserved and only content is lost —
-    the partial-capture / occlusion case.
+    the partial-capture / occlusion case. Not part of the Week-1/2 channel presets; reserved for
+    the Week-5 synchronisation branch (tiled payload / RaptorQ over partial captures).
     """
 
     name = "crop"
@@ -81,12 +76,12 @@ class Crop(Distortion):
         self.area_min, self.area_max, self.fill = area_min, area_max, fill
 
     def _distort(self, x: ImageBatch, gen: torch.Generator) -> ImageBatch:
-        area = _uniform(self.area_min, self.area_max, gen)
+        area = uniform(self.area_min, self.area_max, gen)
         h, w = x.shape[-2:]
         side = math.sqrt(area)
         ch, cw = max(1, round(h * side)), max(1, round(w * side))
-        y0 = int(_uniform(0, h - ch + 1, gen))
-        x0 = int(_uniform(0, w - cw + 1, gen))
+        y0 = int(uniform(0, h - ch + 1, gen))
+        x0 = int(uniform(0, w - cw + 1, gen))
         y0, x0 = min(y0, h - ch), min(x0, w - cw)
         self.last_params = {"area": area, "y0": y0, "x0": x0, "h": ch, "w": cw}
         if ch == h and cw == w:

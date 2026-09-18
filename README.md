@@ -16,4 +16,7 @@ uv run pm-plot outputs/<run>                   # BER-vs-severity, ROC, robustnes
 ```
 
 Layout: `src/perceptual_media/{core,markers,distort,metrics,harness}`, configs in `configs/`,
-external data paths in `configs/paths.yaml`. Progress: `tasks/todo.md`; decisions: `docs/worklog.md`.
+external data paths in `configs/paths.yaml`. Progress: `tasks/todo.md`; decisions: `docs/worklog.md`; results: `docs/results/`.
+
+Workflow: `main` is always green (`uv run pytest`, `ruff check`); integrations and hard-to-revert
+work happen on a branch and merge when the suite passes there.

@@ -4,7 +4,11 @@ import torch
 from perceptual_media.core.seed import make_generator
 from perceptual_media.core.types import ConventionError
 from perceptual_media.distort.base import Distortion, DistortionChain, Identity
-from perceptual_media.distort.presets import available_presets, build_chain, register_preset
+from perceptual_media.distort.presets import (
+    available_presets,
+    build_chain,
+    register_preset,
+)
 
 
 class _Scale(Distortion):

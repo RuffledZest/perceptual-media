@@ -5,7 +5,7 @@ seed: 0
 
 corpus:
   manifest: data/corpus/manifest.csv
-  limit: 8
+  per_class: 2   # 2 of each class (limit: 8 would have taken 8 flat images)
 
 marker:
   name: "null"
