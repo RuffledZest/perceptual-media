@@ -77,9 +77,9 @@ These are made now so they don't happen to us later. Change them deliberately, n
 so `.gitignore` is in effect before any generated data exists.
 
 **Acceptance criteria:**
-- [ ] `uv add lpips scikit-image pyyaml pandas` succeeds on Python 3.13
-- [ ] `uv run python -c "import lpips, skimage, yaml, pandas"` exits 0
-- [ ] First commit contains: `.gitignore`, `pyproject.toml`, `uv.lock`, `README.md`, `src/`, `tests/`, `tasks/`, `claude_markdowns/`, `data/.gitkeep`, `outputs/.gitkeep`
+- [x] `uv add lpips scikit-image pyyaml pandas` succeeds on Python 3.13
+- [x] `uv run python -c "import lpips, skimage, yaml, pandas"` exits 0
+- [x] First commit contains: `.gitignore`, `pyproject.toml`, `uv.lock`, `README.md`, `src/`, `tests/`, `tasks/`, `claude_markdowns/`, `data/.gitkeep`, `outputs/.gitkeep`
 
 **Verification:** `uv run pytest` green; `git log --oneline | wc -l` == 1; `git status` clean.
 **Dependencies:** None. **Files:** `pyproject.toml`, `uv.lock`. **Scope:** XS
@@ -92,9 +92,9 @@ so `.gitignore` is in effect before any generated data exists.
 **Description:** Establish the tensor convention and the two utilities everything else imports.
 
 **Acceptance criteria:**
-- [ ] `core/types.py` documents the `(B,3,H,W) float32 [0,1]` convention and exposes `ImageBatch`, `Payload` aliases and an `assert_image_batch()` validator
-- [ ] `core/seed.py::seed_everything(seed)` makes two runs of `torch.rand(4)` + `np.random.rand(4)` + `random.random()` identical
-- [ ] `core/io.py::load_image(path) -> (1,3,H,W)` and `save_image(t, path)` round-trip with max abs error ≤ 1/255; `to_numpy_uint8` / `from_numpy_uint8` helpers
+- [x] `core/types.py` documents the `(B,3,H,W) float32 [0,1]` convention and exposes `ImageBatch`, `Payload` aliases and an `assert_image_batch()` validator
+- [x] `core/seed.py::seed_everything(seed)` makes two runs of `torch.rand(4)` + `np.random.rand(4)` + `random.random()` identical
+- [x] `core/io.py::load_image(path) -> (1,3,H,W)` and `save_image(t, path)` round-trip with max abs error ≤ 1/255; `to_uint8` / `from_uint8` helpers
 
 **Verification:** `uv run pytest tests/core -q`
 **Dependencies:** Task 0. **Files:** `core/{types,seed,io}.py`, `tests/core/test_{seed,io}.py`. **Scope:** S
@@ -103,9 +103,9 @@ so `.gitignore` is in effect before any generated data exists.
 **Description:** Typed experiment configs with defaults and strict unknown-key errors.
 
 **Acceptance criteria:**
-- [ ] `core/config.py::load_config(path, schema=ExperimentConfig)` returns a nested dataclass
-- [ ] Unknown keys raise `ConfigError` naming the key; missing required keys raise naming the key
-- [ ] `dump_config(cfg, path)` writes YAML that reloads to an equal object
+- [x] `core/config.py::load_config(path, schema=ExperimentConfig)` returns a nested dataclass
+- [x] Unknown keys raise `ConfigError` naming the key; missing required keys raise naming the key
+- [x] `dump_config(cfg, path)` writes YAML that reloads to an equal object
 
 **Verification:** `uv run pytest tests/core/test_config.py -q`
 **Dependencies:** Task 1. **Files:** `core/config.py`, `tests/core/test_config.py`, `configs/experiments/smoke.yaml`. **Scope:** S
@@ -116,9 +116,9 @@ implementation that makes the unmarked-control path and end-to-end testing possi
 real marker exists.
 
 **Acceptance criteria:**
-- [ ] `markers/base.py` defines `Marker` (Protocol) with `embed`, `decode`, `capacity`, `n_bits`
-- [ ] `DecodeResult` holds `llrs: (B, n_bits)` and `score: (B,)`; `.hard_bits()` slices at 0
-- [ ] `NullMarker.embed` is identity; `.decode` returns seeded random LLRs so BER ≈ 0.5 over 1000 bits (test asserts 0.45–0.55); `.capacity` returns `None`
+- [x] `markers/base.py` defines `Marker` (Protocol) with `embed`, `decode`, `capacity`, `n_bits`
+- [x] `DecodeResult` holds `llrs: (B, n_bits)` and `score: (B,)`; `.hard_bits()` slices at 0
+- [x] `NullMarker.embed` is identity; `.decode` returns seeded random LLRs so BER ≈ 0.5 over 1000 bits (test asserts 0.45–0.55); `.capacity` returns `None`
 
 **Verification:** `uv run pytest tests/markers/test_base.py -q`
 **Dependencies:** Task 1. **Files:** `markers/base.py`, `tests/markers/test_base.py`. **Scope:** S
