@@ -296,9 +296,9 @@ sequence, per-coefficient amplitude = `strength × watson_slack`. Detector retur
 correlations (soft LLRs) and a global normalised-correlation detection score.
 
 **Acceptance criteria:**
-- [ ] `ClassicalSSMarker` satisfies `Marker`; no-distortion, strength 1.0 → BER 0 on all corpus classes
-- [ ] `capacity(img)` returns a first-cut estimate (sum of slack energy in the mid-band / energy needed per bit at target BER) — documented as provisional
-- [ ] PSNR/SSIM/LPIPS reported; refusal behaviour: `embed` raises `CapacityError` when `capacity < n_bits` unless `force=True`
+- [x] `ClassicalSSMarker` satisfies `Marker`; no-distortion, strength 1.0 → BER 0 on all corpus classes
+- [x] `capacity(img)` returns a first-cut estimate (sum of slack energy in the mid-band / energy needed per bit at target BER) — documented as provisional
+- [x] PSNR/SSIM/LPIPS reported; refusal behaviour: `embed` raises `CapacityError` when `capacity < n_bits` unless `force=True`
 
 **Dependencies:** Tasks 15, 16, 13. **Scope:** M
 

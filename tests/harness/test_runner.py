@@ -6,6 +6,7 @@ import pytest
 import torch
 
 from perceptual_media.core.config import DistortionConfig, ExperimentConfig, MarkerConfig, CorpusConfig
+from perceptual_media.core.seed import make_generator
 from perceptual_media.harness.cli import main, summarize
 from perceptual_media.harness.results import read_results
 from perceptual_media.harness.runner import (
@@ -117,4 +118,26 @@ def test_cli_smoke_config(tmp_path: Path, capsys: pytest.CaptureFixture[str], mo
 def test_unknown_preset_is_a_clear_error(tmp_path: Path) -> None:
     cfg = _cfg(tmp_path, distortions=[DistortionConfig("no_such_preset", 0.5)])
     with pytest.raises(KeyError, match="unknown distortion preset 'no_such_preset'"), pytest.warns(UserWarning):
+        run_experiment(cfg)
+
+
+def test_runner_with_ecc_reports_message_bits_and_recovery(tmp_path: Path) -> None:
+    from perceptual_media.core.config import EccConfig
+
+    g = make_generator(0)
+    smooth = torch.nn.functional.interpolate(torch.rand(1, 3, 16, 16, generator=g), size=(256, 256), mode="bicubic", align_corners=False)
+    corpus = [CorpusImage("a", "textured", (smooth + 0.05 * torch.randn(1, 3, 256, 256, generator=g)).clamp(0.05, 0.95))]
+    cfg = _cfg(tmp_path, marker=MarkerConfig(name="classical_ss", n_bits=127), ecc=EccConfig("bch", 127, 64), control=True)
+    df = read_results(run_experiment(cfg, corpus=corpus))
+    m, c = df[df["marked"]], df[~df["marked"]]
+    assert (df["n_payload_bits"] == 64).all()
+    assert m["ber"].iloc[0] == 0.0 and bool(m["payload_recovered"].iloc[0])
+    assert 0.3 < c["ber"].iloc[0] < 0.7 and not bool(c["payload_recovered"].iloc[0])
+
+
+def test_runner_rejects_ecc_marker_mismatch(tmp_path: Path) -> None:
+    from perceptual_media.core.config import EccConfig
+
+    cfg = _cfg(tmp_path, marker=MarkerConfig(name="null", n_bits=64), ecc=EccConfig("bch", 127, 64))
+    with pytest.raises(ValueError, match="must equal marker.n_bits"):
         run_experiment(cfg)

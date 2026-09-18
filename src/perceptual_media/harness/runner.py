@@ -17,10 +17,11 @@ import zlib
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import torch
 
-from perceptual_media.core.config import CorpusConfig, ExperimentConfig
+from perceptual_media.core.config import CorpusConfig, EccConfig, ExperimentConfig
 from perceptual_media.core.seed import make_generator, seed_everything
 from perceptual_media.core.types import ImageBatch
 from perceptual_media.corpus.manifest import iter_images
@@ -86,6 +87,20 @@ def load_corpus(cfg: CorpusConfig, seed: int = 0) -> Iterator[CorpusImage]:
     yield from images
 
 
+def build_ecc(cfg: EccConfig | None, marker_bits: int) -> Any:
+    """Instantiate the configured ECC (or ``None``) and check it matches the marker's channel width."""
+    if cfg is None:
+        return None
+    if cfg.name != "bch":
+        raise KeyError(f"unknown ecc {cfg.name!r}; available: ['bch']")
+    from perceptual_media.markers.classical.bch import BCHCode  # numba import, deferred
+
+    ecc = BCHCode(cfg.n, cfg.k)
+    if ecc.n != marker_bits:
+        raise ValueError(f"ecc n={ecc.n} must equal marker.n_bits={marker_bits}")
+    return ecc
+
+
 def _sync(device: torch.device) -> None:
     if device.type == "cuda":
         torch.cuda.synchronize(device)
@@ -104,6 +119,8 @@ def run_experiment(cfg: ExperimentConfig, corpus: Iterable[CorpusImage] | None =
     seed_everything(cfg.seed)
     device = resolve_device(cfg.device)
     marker: Marker = get_marker(cfg.marker.name, cfg.marker.n_bits, **cfg.marker.params)
+    ecc = build_ecc(cfg.ecc, marker.n_bits)
+    n_message_bits = ecc.k if ecc is not None else marker.n_bits
     images = corpus if corpus is not None else load_corpus(cfg.corpus, cfg.seed)
     run_dir = make_run_dir(cfg.output_dir, cfg.name)
     run_id = run_dir.name
@@ -115,14 +132,15 @@ def run_experiment(cfg: ExperimentConfig, corpus: Iterable[CorpusImage] | None =
                 for dcfg in cfg.distortions:
                     chain = build_chain(dcfg.preset, dcfg.severity).to(device)
                     seed = trial_seed(cfg.seed, item.image_id, strength, dcfg.preset, dcfg.severity)
-                    payload = random_payload(1, marker.n_bits, make_generator(seed)).to(device)
+                    message = random_payload(1, n_message_bits, make_generator(seed)).to(device)
+                    payload = ecc.encode(message) if ecc is not None else message  # channel bits
 
                     def one(x: ImageBatch, marked: bool) -> None:
                         enc_ms = math.nan
                         fid: dict[str, float] = {}
                         if marked:
                             original = x
-                            x, enc_ms = _timed(lambda: marker.embed(original, payload, strength), device)
+                            x, enc_ms = _timed(lambda: marker.embed(original, payload, strength, force=cfg.force_embed), device)
                             # Fidelity is marked-vs-original, before the channel.
                             fid = {k: float(v[0]) for k, v in fidelity(x, original).items()}
                         # Same distortion seed for marked and control → identical sampled params.
@@ -135,13 +153,13 @@ def run_experiment(cfg: ExperimentConfig, corpus: Iterable[CorpusImage] | None =
                                 image_id=item.image_id,
                                 image_class=item.image_class,
                                 marked=marked,
-                                n_payload_bits=marker.n_bits,
+                                n_payload_bits=n_message_bits,
                                 embed_strength=strength if marked else 0.0,
                                 distortion_chain=chain.name,
                                 distortion_params=to_json({"severity": dcfg.severity, **chain.last_params}),
                                 capture_conditions="",
                                 ber=float(ber(res.llrs, payload)[0]),
-                                payload_recovered=bool(payload_recovered(res.llrs, payload)[0]),
+                                payload_recovered=bool(payload_recovered(res.llrs, message, ecc=ecc)[0]),
                                 detector_score=float(res.score[0]),
                                 psnr=fid.get("psnr", math.nan),
                                 ssim=fid.get("ssim", math.nan),

@@ -53,6 +53,20 @@ class MarkerConfig:
 
 
 @dataclass
+class EccConfig:
+    """Error-correcting code applied by the harness around the marker (markers are ECC-agnostic).
+
+    With ``name: bch``, the runner draws a ``k``-bit message, encodes it to ``n`` channel bits
+    (which must equal ``marker.n_bits``), reports raw BER on the ``n`` channel bits and payload
+    recovery on the decoded ``k``-bit message.
+    """
+
+    name: str = "bch"
+    n: int = 127
+    k: int = 64
+
+
+@dataclass
 class DistortionConfig:
     """One named distortion chain at one severity."""
 
@@ -68,10 +82,14 @@ class ExperimentConfig:
     seed: int = 0
     corpus: CorpusConfig = field(default_factory=CorpusConfig)
     marker: MarkerConfig = field(default_factory=MarkerConfig)
+    ecc: EccConfig | None = None
     distortions: list[DistortionConfig] = field(default_factory=lambda: [DistortionConfig()])
     strengths: list[float] = field(default_factory=lambda: [1.0])
     control: bool = True
     """Also run every image unmarked through the identical chain (false-positive accounting)."""
+    force_embed: bool = True
+    """Embed even when ``marker.capacity(img) < n_bits`` (so refusals are measured, not skipped).
+    Set false to exercise the refusal path; refused images raise ``CapacityError``."""
     output_dir: str = "outputs"
     device: str = "auto"
     """``auto`` = CUDA if available, else CPU."""
