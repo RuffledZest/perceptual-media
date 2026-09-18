@@ -1,0 +1,31 @@
+# Week-3 learned baseline (Video Seal 1.0, 256 bits): full corpus x both channel presets x severity grid x strength grid.
+# Strength scales the model residual (1.0 = its default scaling_w 0.2). ECC: BCH(127,64) x2 soft-combined in 256 bits.
+name: videoseal_sweep
+seed: 0
+
+corpus:
+  manifest: data/corpus/manifest.csv
+
+marker:
+  name: videoseal
+  n_bits: 256
+  params: {}
+
+ecc: {name: bch, n: 127, k: 64, repeat: 2}   # same message + inner code as classical; 2 soft-combined copies fill the 256-bit channel
+
+distortions:
+  - {preset: identity, severity: 0.0}
+  - {preset: print_camera, severity: 0.25}
+  - {preset: print_camera, severity: 0.5}
+  - {preset: print_camera, severity: 0.75}
+  - {preset: print_camera, severity: 1.0}
+  - {preset: screen_camera, severity: 0.25}
+  - {preset: screen_camera, severity: 0.5}
+  - {preset: screen_camera, severity: 0.75}
+  - {preset: screen_camera, severity: 1.0}
+
+strengths: [0.5, 1.0, 2.0]   # 1.0 = the model default (scaling_w 0.2)
+control: true
+force_embed: true
+output_dir: outputs
+device: auto
