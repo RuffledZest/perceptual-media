@@ -35,8 +35,8 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 - [x] Task 19: ~~CUDA torch build~~ (done in Task 0); GPU-if-available in harness (`device: auto` since Task 6; verified in audit 2026-09-18)
 - [x] Task 20: Video Seal installed (optional extra, decord overridden, cwd-independent loader); published SA-V metrics pulled as the reference; recorded (2026-09-18)
 - [x] Task 21: `VideoSealMarker` adapter (2026-09-18)
-- [ ] Task 22: same sweep, overlaid on Week-2 plots
-- [ ] **Checkpoint W3** — learned vs classical gap measured
+- [x] Task 22: same sweep, overlaid on Week-2 plots (2026-09-18: `pm-compare`, `docs/results/week3_learned.md`)
+- [x] **Checkpoint W3** — learned vs classical gap measured (2026-09-18: perspective cliff 1° → ~15°; both dead at ≥30°; flat-image JPEG failure recurs)
 
 ## Phase 4 — Week 4: Physical capture
 - [ ] Task 23: capture protocol + `pm-capture log`

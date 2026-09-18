@@ -219,4 +219,8 @@ def read_results(run_dir_or_csv: str | Path) -> pd.DataFrame:
         df[col] = df[col].map({"True": True, "False": False, True: True, False: False}).astype("bool")
     for col in ("distortion_params", "capture_conditions"):
         df[col] = df[col].fillna("").astype("string")
+    # Schema evolution: columns added after a run was written (e.g. capacity_bits) read as NaN.
+    for col in ResultRow.columns():
+        if col not in df.columns:
+            df[col] = math.nan
     return df[ResultRow.columns()]

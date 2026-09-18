@@ -32,7 +32,13 @@ def _label(run_dir: Path) -> str:
 
 
 def load_summary(run_dir: str | Path) -> dict:
-    return json.loads((Path(run_dir) / "summary.json").read_text(encoding="utf-8"))
+    """``summary.json`` of a run; regenerated from ``results.csv`` if the run predates it."""
+    path = Path(run_dir) / "summary.json"
+    if not path.exists():
+        from perceptual_media.harness.results import write_summary
+
+        write_summary(run_dir)
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def compare_runs(run_dirs: list[str | Path], metric: str, out: Path, ylabel: str, ylim: tuple[float, float]) -> Path:
