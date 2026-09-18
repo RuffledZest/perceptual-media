@@ -275,10 +275,10 @@ named chains the rest of the project evaluates against.
 table, luminance masking, contrast masking. Pin and document the viewing condition (distance, DPI).
 
 **Acceptance criteria:**
-- [ ] `watson_slack(y_dct, viewing=ViewingCondition(...)) -> slack` same shape as coefficients
-- [ ] Bright block slack > dark block slack; textured block slack > flat block slack; DC term handled
-- [ ] Unit test against a hand-computed 8×8 block for all three stages
-- [ ] Docstring states the assumed viewing condition and the masking exponent used
+- [x] `watson_slack(y_dct, viewing=ViewingCondition(...)) -> slack` same shape as coefficients
+- [x] Bright block slack > dark block slack; textured block slack > flat block slack; DC term handled
+- [x] Unit test against a hand-computed 8×8 block for all three stages
+- [x] Docstring states the assumed viewing condition and the masking exponent used
 
 **Dependencies:** Task 14. **Scope:** M
 
@@ -312,7 +312,7 @@ correlations (soft LLRs) and a global normalised-correlation detection score.
 
 ### Checkpoint — Week 2 complete
 - [ ] Classical numbers on the board; harness validated by a real marker
-- [ ] Watson slack maps eyeballed on flat vs textured images — do they match intuition?
+- [x] Watson slack maps eyeballed on flat vs textured images — do they match intuition? (2026-09-18: yes — flat uniform/low, poster only on letter edges, photo high on foliage low on sky)
 - [ ] Stop improving the classical system. Move on.
 
 ---

@@ -25,7 +25,7 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 
 ## Phase 2 — Week 2: Classical baseline
 - [x] Task 14: block DCT + YCbCr utils (2026-09-18)
-- [ ] Task 15: Watson DCT slack matrix (pinned viewing condition)
+- [x] Task 15: Watson DCT slack matrix (pinned viewing condition) (2026-09-18)
 - [ ] Task 16: BCH(64→127)
 - [ ] Task 17: `ClassicalSSMarker` — SS embed under Watson budget, soft correlation detector, provisional `capacity()` + refusal
 - [ ] Task 18: classical sweep + plots + `docs/results/week2_classical.md`

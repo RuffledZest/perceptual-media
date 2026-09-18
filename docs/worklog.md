@@ -61,5 +61,20 @@ noise-std test needed to compare against the sampled σ.
 NullMarker: BER 0.50, AUC 0.50 on all chains. 147 tests in 14 s. Severity-0.5 samples reviewed
 visually: plausible phone photos (foreshortening, softening, colour shift, screen grid texture).
 
-**Next:** Phase 2 / Week 2 — Task 14 (block DCT utils) → Task 15 (Watson slack) → BCH →
-classical spread-spectrum marker → Week-2 sweep and failure writeup.
+**Phase 2 started the same day (user: "we should move forward").**
+- Task 14: DCT/YCbCr moved to `core/transforms` (shared by JPEG and the classical marker);
+  `markers/classical/dct` adds the luma view (Y in 0–255, DC = 8·mean) and the mid band
+  (u+v ∈ [3, 8] = 37 coefficients).
+- Task 15: Watson model. Read Watson 1993 from source (SPIE 1913): a_T = 0.649, w = 0.7,
+  w₀₀ = 0, c̄₀₀ = 1024, reference condition **32 px/deg, L₀ = 65 cd/m²**. The frequency table
+  is Cox's Table 7.2 (Peterson's method). I could not reproduce it from memory of the
+  Ahumada–Peterson constants, so instead the table is used exactly at the reference and the
+  A–P log-parabola is *fitted* to it (t_min 0.95, f_min 2.75 cyc/deg, K 1.52, r 0.62; rms 11 %)
+  and applied as a ratio to move to our pinned 96 DPI @ 60 cm (39.6 px/deg): thresholds rise
+  ~10 % at low and ~70 % at the highest frequencies. Slack maps eyeballed: match intuition.
+- **Design note for Task 17 `capacity()`:** Watson thresholds are per single basis function.
+  A flat mid-grey block still has ~194 units of mid-band slack, but spending it across 37
+  coefficients pools to a visible error (Watson's β = 4 Minkowski pooling). Capacity must
+  budget the *pooled* JND, not the per-coefficient sum — otherwise flat images look markable.
+
+**Next:** Task 16 (BCH 64→127) → Task 17 (classical SS marker) → Task 18 (sweep + writeup).
