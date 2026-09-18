@@ -128,9 +128,9 @@ real marker exists.
 directory with results, resolved config, and git hash.
 
 **Acceptance criteria:**
-- [ ] `ResultRow` fields, exactly: `run_id, seed, image_id, image_class, marked (bool), n_payload_bits, embed_strength, distortion_chain (str), distortion_params (json str), capture_conditions (json str, "" for sim), ber, payload_recovered (bool), detector_score, psnr, ssim, lpips, encode_ms, decode_ms`
-- [ ] `ResultWriter(run_dir)` appends rows to `results.csv` (flush every row so a crash keeps data), writes `config.yaml` and `git_hash.txt` on open
-- [ ] `pandas.read_csv` of 100 written rows yields 100 rows with bool/float dtypes preserved
+- [x] `ResultRow` fields, exactly: `run_id, seed, image_id, image_class, marked (bool), n_payload_bits, embed_strength, distortion_chain (str), distortion_params (json str), capture_conditions (json str, "" for sim), ber, payload_recovered (bool), detector_score, psnr, ssim, lpips, encode_ms, decode_ms`
+- [x] `ResultWriter(run_dir)` appends rows to `results.csv` (flush every row so a crash keeps data), writes `config.yaml` and `git_hash.txt` on open
+- [x] `pandas.read_csv` of 100 written rows yields 100 rows with bool/float dtypes preserved
 
 **Verification:** `uv run pytest tests/harness/test_results.py -q`
 **Dependencies:** Task 2. **Files:** `harness/results.py`, `tests/harness/test_results.py`. **Scope:** S
