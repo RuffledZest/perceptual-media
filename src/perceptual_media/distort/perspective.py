@@ -84,8 +84,11 @@ def pose_corners(w: int, h: int, tilt_deg: float, yaw_deg: float, roll_deg: floa
 class Perspective(Distortion):
     name = "perspective"
 
-    def __init__(self, max_angle: float = 45.0, max_roll: float = 10.0, fov_deg: float = 60.0, mode: Mode = "pose", jitter: float = 0.1, fill: float = 0.5) -> None:
+    def __init__(self, max_angle: float = 45.0, max_roll: float = 10.0, fov_deg: float = 60.0, mode: Mode = "pose", jitter: float = 0.1, fill: float = 0.5, fixed: bool = False) -> None:
+        """``fixed=True`` (pose mode only): tilt = ``max_angle`` exactly, yaw = roll = 0 — for
+        BER-vs-angle curves with no sampling noise."""
         super().__init__()
+        self.fixed = fixed
         if max_angle < 0 or max_roll < 0 or jitter < 0:
             raise ValueError("ranges must be >= 0")
         if not 0 < fov_deg < 180:
@@ -97,7 +100,10 @@ class Perspective(Distortion):
         h, w = x.shape[-2:]
         src = torch.tensor([[0, 0], [w, 0], [w, h], [0, h]], dtype=torch.float32)
         if self.mode == "pose":
-            tilt, yaw, roll = _uniform(-self.max_angle, self.max_angle, gen), _uniform(-self.max_angle, self.max_angle, gen), _uniform(-self.max_roll, self.max_roll, gen)
+            if self.fixed:
+                tilt, yaw, roll = float(self.max_angle), 0.0, 0.0
+            else:
+                tilt, yaw, roll = _uniform(-self.max_angle, self.max_angle, gen), _uniform(-self.max_angle, self.max_angle, gen), _uniform(-self.max_roll, self.max_roll, gen)
             dst = pose_corners(w, h, tilt, yaw, roll, self.fov_deg)
             self.last_params = {"mode": "pose", "tilt_deg": tilt, "yaw_deg": yaw, "roll_deg": roll, "fov_deg": self.fov_deg}
             if tilt == 0 and yaw == 0 and roll == 0:

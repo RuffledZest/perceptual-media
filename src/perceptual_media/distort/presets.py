@@ -22,6 +22,10 @@ noise                   σ ≤ 0.02                        σ ≤ 0.02
 Order: perspective → illumination → [moiré] → defocus → motion → resize → JPEG → noise.
 ``print_camera`` is the primary physical preset (brief; literature review), ``screen_camera``
 adds moiré.
+
+Single-axis presets (deterministic in severity, for isolating one distortion):
+``perspective_fixed`` tilt = 60°·s; ``defocus_fixed`` σ = 3·s px; ``jpeg_fixed`` Q = 100 − 75·s;
+``resize_fixed`` scale = 1 − 0.6·s.
 """
 
 from __future__ import annotations
@@ -59,6 +63,11 @@ _PRESETS: dict[str, Callable[[float], DistortionChain]] = {
     "identity": lambda severity: DistortionChain([Identity()], name="identity"),
     "print_camera": lambda severity: DistortionChain(_camera_stages(severity, moire=False), name="print_camera"),
     "screen_camera": lambda severity: DistortionChain(_camera_stages(severity, moire=True), name="screen_camera"),
+    # single-stage, deterministic-in-severity presets for isolating one axis
+    "perspective_fixed": lambda severity: DistortionChain([Perspective(max_angle=60 * severity, max_roll=0, mode="pose", fixed=True)], name="perspective_fixed"),
+    "defocus_fixed": lambda severity: DistortionChain([DefocusBlur(3.0 * severity, 3.0 * severity)], name="defocus_fixed"),
+    "jpeg_fixed": lambda severity: DistortionChain([JPEG(100 - 75 * severity, 100 - 75 * severity)], name="jpeg_fixed"),
+    "resize_fixed": lambda severity: DistortionChain([Resize(1.0 - 0.6 * severity, 1.0 - 0.6 * severity)], name="resize_fixed"),
     # differentiable variants for training (surrogate JPEG)
     "print_camera_diff": lambda severity: DistortionChain(_camera_stages(severity, moire=False, differentiable_jpeg=True), name="print_camera_diff"),
     "screen_camera_diff": lambda severity: DistortionChain(_camera_stages(severity, moire=True, differentiable_jpeg=True), name="screen_camera_diff"),

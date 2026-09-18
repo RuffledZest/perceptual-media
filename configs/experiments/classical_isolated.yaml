@@ -1,0 +1,41 @@
+# Week-2 classical baseline, one distortion axis at a time (deterministic in severity):
+#   perspective_fixed: tilt = 60 deg * severity   defocus_fixed: sigma = 3 px * severity
+#   jpeg_fixed: Q = 100 - 75 * severity           resize_fixed: scale = 1 - 0.6 * severity
+name: classical_isolated
+seed: 0
+
+corpus:
+  manifest: data/corpus/manifest.csv
+
+marker:
+  name: classical_ss
+  n_bits: 127
+  params: {key: 0}
+
+ecc: {name: bch, n: 127, k: 64}
+
+distortions:
+  - {preset: perspective_fixed, severity: 0.0}
+  - {preset: perspective_fixed, severity: 0.0167}   # 1 deg
+  - {preset: perspective_fixed, severity: 0.05}     # 3 deg
+  - {preset: perspective_fixed, severity: 0.1}      # 6 deg
+  - {preset: perspective_fixed, severity: 0.25}     # 15 deg
+  - {preset: perspective_fixed, severity: 0.5}      # 30 deg
+  - {preset: perspective_fixed, severity: 0.75}     # 45 deg
+  - {preset: defocus_fixed, severity: 0.17}         # 0.5 px
+  - {preset: defocus_fixed, severity: 0.33}         # 1.0 px
+  - {preset: defocus_fixed, severity: 0.5}          # 1.5 px
+  - {preset: defocus_fixed, severity: 0.67}         # 2.0 px
+  - {preset: defocus_fixed, severity: 0.83}         # 2.5 px
+  - {preset: defocus_fixed, severity: 1.0}          # 3.0 px
+  - {preset: jpeg_fixed, severity: 0.33}            # Q75
+  - {preset: jpeg_fixed, severity: 0.67}            # Q50
+  - {preset: jpeg_fixed, severity: 1.0}             # Q25
+  - {preset: resize_fixed, severity: 0.5}           # 0.7
+  - {preset: resize_fixed, severity: 1.0}           # 0.4
+
+strengths: [1.0]
+control: true
+force_embed: true
+output_dir: outputs
+device: auto

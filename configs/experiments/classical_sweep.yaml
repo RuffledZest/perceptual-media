@@ -1,0 +1,31 @@
+# Week-2 classical baseline: full corpus x both channel presets x severity grid x strength grid.
+# Strength is in Watson JNDs per coefficient. ECC: BCH(127,64) around the 127-bit channel.
+name: classical_sweep
+seed: 0
+
+corpus:
+  manifest: data/corpus/manifest.csv
+
+marker:
+  name: classical_ss
+  n_bits: 127
+  params: {key: 0}
+
+ecc: {name: bch, n: 127, k: 64}
+
+distortions:
+  - {preset: identity, severity: 0.0}
+  - {preset: print_camera, severity: 0.25}
+  - {preset: print_camera, severity: 0.5}
+  - {preset: print_camera, severity: 0.75}
+  - {preset: print_camera, severity: 1.0}
+  - {preset: screen_camera, severity: 0.25}
+  - {preset: screen_camera, severity: 0.5}
+  - {preset: screen_camera, severity: 0.75}
+  - {preset: screen_camera, severity: 1.0}
+
+strengths: [0.1, 0.25, 0.5, 1.0]
+control: true
+force_embed: true
+output_dir: outputs
+device: auto

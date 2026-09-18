@@ -71,3 +71,15 @@ def test_non_diff_variant_runs_on_cuda_if_available() -> None:
     chain = build_chain("screen_camera", 0.5).cuda()
     y = chain(x, make_generator(0, "cuda"))
     assert y.device.type == "cuda" and y.shape == x.shape
+
+
+def test_fixed_single_axis_presets_are_deterministic_in_severity() -> None:
+    x = _img()
+    for preset in ("perspective_fixed", "defocus_fixed", "jpeg_fixed", "resize_fixed"):
+        a = build_chain(preset, 0.5)(x, make_generator(0))
+        b = build_chain(preset, 0.5)(x, make_generator(99))  # different generator, same result
+        assert torch.equal(a, b), preset
+        assert torch.equal(build_chain(preset, 0.0)(x, make_generator(0)), x), preset
+    p = build_chain("perspective_fixed", 0.5)
+    p(x, make_generator(0))
+    assert p.last_params["perspective"]["tilt_deg"] == 30.0 and p.last_params["perspective"]["yaw_deg"] == 0.0
