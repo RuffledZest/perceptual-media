@@ -14,7 +14,7 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 - [x] Task 5: decoding metrics — BER, recovery, ROC/AUC, FPR helpers (2026-09-18)
 - [x] Task 6: runner + `pm-run` CLI (vertical slice with NullMarker + Identity) (2026-09-18)
 - [x] **Checkpoint A** — end-to-end CSV with marked + control rows, BER ≈ 0.5 (2026-09-18: 12 rows, BER 0.52/0.48, AUC 0.58, 3 s on GPU)
-- [ ] Task 7: fidelity metrics — PSNR, SSIM, LPIPS
+- [x] Task 7: fidelity metrics — PSNR, SSIM, LPIPS (2026-09-18)
 - [ ] Task 8: corpus builder — flat / gradient / text / textured (+ photos, faces from dir) + manifest
 - [ ] Task 9: distortion base + Identity / Noise / Resize / Crop
 - [ ] Task 10: JPEG (real + differentiable) + defocus / motion blur

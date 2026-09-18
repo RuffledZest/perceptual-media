@@ -27,6 +27,7 @@ from perceptual_media.distort.presets import build_chain
 from perceptual_media.harness.results import ResultRow, ResultWriter, make_run_dir, to_json
 from perceptual_media.markers.base import Marker, get_marker, random_payload
 from perceptual_media.metrics.decoding import ber, payload_recovered
+from perceptual_media.metrics.fidelity import fidelity
 
 
 @dataclass
@@ -113,8 +114,12 @@ def run_experiment(cfg: ExperimentConfig, corpus: Iterable[CorpusImage] | None =
 
                     def one(x: ImageBatch, marked: bool) -> None:
                         enc_ms = math.nan
+                        fid: dict[str, float] = {}
                         if marked:
-                            x, enc_ms = _timed(lambda: marker.embed(x, payload, strength), device)
+                            original = x
+                            x, enc_ms = _timed(lambda: marker.embed(original, payload, strength), device)
+                            # Fidelity is marked-vs-original, before the channel.
+                            fid = {k: float(v[0]) for k, v in fidelity(x, original).items()}
                         # Same distortion seed for marked and control → identical sampled params.
                         x = chain(x, make_generator(seed ^ 0x5BD1E995, device.type))
                         res, dec_ms = _timed(lambda: marker.decode(x), device)
@@ -133,6 +138,9 @@ def run_experiment(cfg: ExperimentConfig, corpus: Iterable[CorpusImage] | None =
                                 ber=float(ber(res.llrs, payload)[0]),
                                 payload_recovered=bool(payload_recovered(res.llrs, payload)[0]),
                                 detector_score=float(res.score[0]),
+                                psnr=fid.get("psnr", math.nan),
+                                ssim=fid.get("ssim", math.nan),
+                                lpips=fid.get("lpips", math.nan),
                                 encode_ms=enc_ms,
                                 decode_ms=dec_ms,
                             )

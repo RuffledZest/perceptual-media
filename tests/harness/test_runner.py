@@ -64,7 +64,10 @@ def test_end_to_end_null_marker_rows(tmp_path: Path) -> None:
     assert (df.loc[~df["marked"], "embed_strength"] == 0.0).all()
     assert (df["distortion_chain"] == "identity").all()
     assert (df["distortion_params"] == '{"identity": {}, "severity": 0.0}').all()
-    assert df["psnr"].isna().all()  # until Task 7
+    # fidelity: marked rows populated (NullMarker → identical → PSNR cap, SSIM 1, LPIPS 0); control NaN
+    m, c = df[df["marked"]], df[~df["marked"]]
+    assert (m["psnr"] == 100.0).all() and (m["ssim"].sub(1).abs() < 1e-5).all() and (m["lpips"] <= 1e-6).all()
+    assert c[["psnr", "ssim", "lpips"]].isna().all().all()
     assert (run_dir / "config.yaml").exists() and (run_dir / "git_hash.txt").exists()
 
     # marked and control rows of the same trial share the seed (identical distortion params)

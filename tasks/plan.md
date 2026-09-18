@@ -171,10 +171,10 @@ an `Identity` distortion so it can run before the corpus and distortion modules 
 **Description:** The perceptual-distance half of the metrics module. Batched, returns per-item.
 
 **Acceptance criteria:**
-- [ ] `psnr(a, b)`: identical → `inf` (returned as a large finite sentinel, documented); known value on a synthetic pair within 1e-3 dB
-- [ ] `ssim(a, b)`: matches `skimage.metrics.structural_similarity` on a 64×64 test image within 1e-3
-- [ ] `lpips(a, b)`: identical → ≤ 1e-6; model loaded once and cached; runs on CPU
-- [ ] Runner fills the three columns for marked rows (control rows: `NaN`)
+- [x] `psnr(a, b)`: identical → `inf` (returned as a large finite sentinel, documented); known value on a synthetic pair within 1e-3 dB
+- [x] `ssim(a, b)`: matches `skimage.metrics.structural_similarity` on a 64×64 test image within 1e-3
+- [x] `lpips(a, b)`: identical → ≤ 1e-6; model loaded once and cached; runs on CPU
+- [x] Runner fills the three columns for marked rows (control rows: `NaN`)
 
 **Verification:** `uv run pytest tests/metrics/test_fidelity.py -q`
 **Dependencies:** Task 6. **Files:** `metrics/fidelity.py`, `harness/runner.py`, `tests/metrics/test_fidelity.py`. **Scope:** S
