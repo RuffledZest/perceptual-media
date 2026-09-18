@@ -222,9 +222,9 @@ differentiable approximation for later training — plus defocus (Gaussian) and 
 **Description:** The two distortions that dominate real capture (brief §1 table, §4.4).
 
 **Acceptance criteria:**
-- [ ] `Illumination`: spatially-varying multiplicative gain (low-frequency field), additive offset, per-channel colour cast, gamma; all ranges configurable; params logged
-- [ ] `Perspective(max_corner_jitter)`: samples a homography by jittering the 4 corners, warps with `grid_sample`; jitter 0 → identity (max abs err ≤ 1e-6); exposes `.last_H` and `inverse_warp()` so an oracle-rectified decode is possible
-- [ ] Gradient test passes for both
+- [x] `Illumination`: spatially-varying multiplicative gain (low-frequency field), additive offset, per-channel colour cast, gamma; all ranges configurable; params logged
+- [x] `Perspective(max_corner_jitter)`: samples a homography by jittering the 4 corners, warps with `grid_sample`; jitter 0 → identity (max abs err ≤ 1e-6); exposes `.last_H` and `inverse_warp()` so an oracle-rectified decode is possible
+- [x] Gradient test passes for both
 
 **Verification:** `uv run pytest tests/distort/test_illumination.py tests/distort/test_perspective.py -q`
 **Dependencies:** Task 9. **Files:** `distort/{illumination,perspective}.py`, tests. **Scope:** M

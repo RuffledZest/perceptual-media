@@ -132,7 +132,7 @@ def _render(size: int, bg: tuple[int, int, int], fg: tuple[int, int, int], layou
         big, small = _font(max(10, int(64 * s))), _font(max(6, int(18 * s)))
         d.text((int(40 * s), int(60 * s)), "OPEN", fill=fg, font=big)
         d.text((int(40 * s), int(140 * s)), "STUDIO", fill=fg, font=big)
-        d.text((int(40 * s), int(240 * s)), "Sat 21 Sep — 10:00–18:00", fill=fg, font=small)
+        d.text((int(40 * s), int(240 * s)), "Sat 21 Sep - 10:00-18:00", fill=fg, font=small)
         y = int(300 * s)
         for line in _wrap(d, _LOREM, small, size - int(80 * s))[:6]:
             d.text((int(40 * s), y), line, fill=fg, font=small)

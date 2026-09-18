@@ -18,7 +18,7 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 - [x] Task 8: corpus builder — flat / gradient / text / textured (+ photos, faces from dir) + manifest (2026-09-18: 67 images, 9/5/5/8 + 40 photos)
 - [x] Task 9: distortion base + Identity / Noise / Resize / Crop (2026-09-18)
 - [x] Task 10: JPEG (real + differentiable) + defocus / motion blur (2026-09-18)
-- [ ] Task 11: illumination + perspective (with oracle inverse)
+- [x] Task 11: illumination + perspective (with oracle inverse) (2026-09-18)
 - [ ] Task 12: moiré + `print_camera` / `screen_camera` presets with severity knob
 - [ ] Task 13: plots — BER vs severity per class, ROC, recovery-vs-LPIPS frontier
 - [ ] **Checkpoint W1** — corpus → run → plot unattended; distorted sample looks like a phone photo
