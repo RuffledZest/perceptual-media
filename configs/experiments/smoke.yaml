@@ -1,0 +1,25 @@
+# Smoke test for the harness: NullMarker through identity + both channel presets.
+# Expected: BER ~0.5 everywhere, AUC ~0.5, every ResultRow column populated.
+name: smoke
+seed: 0
+
+corpus:
+  manifest: data/corpus/manifest.csv
+  limit: 8
+
+marker:
+  name: "null"
+  n_bits: 64
+
+distortions:
+  - preset: identity
+    severity: 0.0
+  - preset: print_camera
+    severity: 0.5
+  - preset: screen_camera
+    severity: 0.5
+
+strengths: [1.0]
+control: true
+output_dir: outputs
+device: auto

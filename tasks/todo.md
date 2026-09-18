@@ -8,7 +8,7 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 
 ## Phase 1 — Week 1: Harness
 - [x] Task 1: core — types, `seed_everything`, image I/O (2026-09-18)
-- [ ] Task 2: config — YAML → dataclasses, strict keys
+- [x] Task 2: config — YAML → dataclasses, strict keys (2026-09-18)
 - [ ] Task 3: `Marker` protocol, `DecodeResult`, `NullMarker`
 - [ ] Task 4: `ResultRow` (§6 schema) + `ResultWriter`
 - [ ] Task 5: decoding metrics — BER, recovery, ROC/AUC, FPR helpers
