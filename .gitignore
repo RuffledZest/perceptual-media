@@ -39,3 +39,6 @@ Thumbs.db
 
 # Result figures for writeups are small and derived from committed configs; allow them.
 !docs/results/figures/*.png
+
+# Video Seal checkpoints auto-download here (videoseal.load writes to ./ckpts)
+ckpts/

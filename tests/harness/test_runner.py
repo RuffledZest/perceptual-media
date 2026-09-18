@@ -144,7 +144,7 @@ def test_runner_rejects_ecc_marker_mismatch(tmp_path: Path) -> None:
     from perceptual_media.core.config import EccConfig
 
     cfg = _cfg(tmp_path, marker=MarkerConfig(name="null", n_bits=64), ecc=EccConfig("bch", 127, 64))
-    with pytest.raises(ValueError, match="must equal marker.n_bits"):
+    with pytest.raises(ValueError, match="exceeds marker.n_bits"):
         run_experiment(cfg)
 
 

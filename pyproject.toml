@@ -35,6 +35,15 @@ build-backend = "uv_build"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
+[project.optional-dependencies]
+# Week 3 learned baseline (facebookresearch/videoseal). Install with `uv sync --extra videoseal`.
+videoseal = ["videoseal>=1.0.1", "requests>=2.31"]  # requests: used by videoseal.load but not declared
+
+[tool.uv]
+# videoseal declares `decord` (video decoding, unmaintained, no py3.13 Windows wheel); it is not
+# needed for image embed/detect. Override it to a never-matching marker.
+override-dependencies = ["decord ; sys_platform == 'never'"]
+
 [tool.uv.sources]
 torch = [{ index = "pytorch-cu130" }]
 torchvision = [{ index = "pytorch-cu130" }]

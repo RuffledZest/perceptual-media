@@ -33,8 +33,8 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 
 ## Phase 3 — Week 3: Learned baseline
 - [x] Task 19: ~~CUDA torch build~~ (done in Task 0); GPU-if-available in harness (`device: auto` since Task 6; verified in audit 2026-09-18)
-- [ ] Task 20: Video Seal installed; published number reproduced; recorded
-- [ ] Task 21: `VideoSealMarker` adapter
+- [x] Task 20: Video Seal installed (optional extra, decord overridden, cwd-independent loader); published SA-V metrics pulled as the reference; recorded (2026-09-18)
+- [x] Task 21: `VideoSealMarker` adapter (2026-09-18)
 - [ ] Task 22: same sweep, overlaid on Week-2 plots
 - [ ] **Checkpoint W3** — learned vs classical gap measured
 
