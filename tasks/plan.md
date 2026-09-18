@@ -265,8 +265,8 @@ named chains the rest of the project evaluates against.
 
 #### Task 14: Block DCT utilities
 **Acceptance criteria:**
-- [ ] `markers/classical/dct.py`: batched 8×8 `block_dct` / `block_idct` on luminance; round-trip error < 1e-5; single block matches `scipy.fft.dctn(norm="ortho")`
-- [ ] `rgb_to_ycbcr` / inverse round-trip within 1e-5
+- [x] `markers/classical/dct.py`: batched 8×8 `block_dct` / `block_idct` on luminance; round-trip error < 1e-5; single block matches `scipy.fft.dctn(norm="ortho")`
+- [x] `rgb_to_ycbcr` / inverse round-trip within 1e-5
 
 **Dependencies:** Task 1. **Scope:** S
 

@@ -24,7 +24,7 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 - [x] **Checkpoint W1** — corpus → run → plot unattended; distorted sample looks like a phone photo (2026-09-18: null_sweep 1,206 rows in 33 s on GPU, 147 tests in 14 s)
 
 ## Phase 2 — Week 2: Classical baseline
-- [ ] Task 14: block DCT + YCbCr utils
+- [x] Task 14: block DCT + YCbCr utils (2026-09-18)
 - [ ] Task 15: Watson DCT slack matrix (pinned viewing condition)
 - [ ] Task 16: BCH(64→127)
 - [ ] Task 17: `ClassicalSSMarker` — SS embed under Watson budget, soft correlation detector, provisional `capacity()` + refusal
