@@ -284,9 +284,9 @@ table, luminance masking, contrast masking. Pin and document the viewing conditi
 
 #### Task 16: BCH(64 → 127) codec
 **Acceptance criteria:**
-- [ ] `markers/classical/bch.py` wraps `galois` (or `bchlib`): encode 64 → 127 bits; corrupt ≤ t bits → exact recovery; > t → returns `(None, failed=True)`
-- [ ] `metrics/decoding.payload_recovered` gains an `ecc=` path
-- [ ] Interface accepts hard bits now but is shaped so a soft-input decoder can replace it
+- [x] `markers/classical/bch.py` wraps `galois` (or `bchlib`): encode 64 → 127 bits; corrupt ≤ t bits → exact recovery; > t → returns `(None, failed=True)`
+- [x] `metrics/decoding.payload_recovered` gains an `ecc=` path
+- [x] Interface accepts hard bits now but is shaped so a soft-input decoder can replace it
 
 **Dependencies:** Task 5. **Scope:** S
 

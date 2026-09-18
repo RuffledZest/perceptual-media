@@ -13,6 +13,7 @@ asked for a target that the control set is too small to estimate.
 from __future__ import annotations
 
 import warnings
+from typing import Any
 
 import numpy as np
 import torch
@@ -29,9 +30,22 @@ def ber(llrs: torch.Tensor, payload: Payload) -> torch.Tensor:
     return (hard != payload).to(torch.float32).mean(dim=1)
 
 
-def payload_recovered(llrs: torch.Tensor, payload: Payload) -> torch.Tensor:
-    """``(B,)`` bool: every bit correct after hard slicing (no ECC; the ECC-aware path arrives in Task 16)."""
-    return ber(llrs, payload) == 0
+def payload_recovered(llrs: torch.Tensor, payload: Payload, ecc: Any | None = None) -> torch.Tensor:
+    """``(B,)`` bool: the payload is recovered.
+
+    Without ``ecc``: every bit correct after hard slicing (``llrs`` and ``payload`` both ``n`` bits).
+    With ``ecc`` (an object with ``decode_soft(llrs) -> (message, ok)``, e.g. ``BCHCode``):
+    ``llrs`` are the ``n`` code bits, ``payload`` is the ``k``-bit message; recovered iff the
+    decoder reports success **and** the decoded message equals ``payload`` (a miscorrection
+    counts as a failure).
+    """
+    if ecc is None:
+        return ber(llrs, payload) == 0
+    assert_payload(payload)
+    msg, ok = ecc.decode_soft(llrs)
+    if msg.shape != payload.shape:
+        raise ValueError(f"decoded message {tuple(msg.shape)} vs payload {tuple(payload.shape)}")
+    return ok & (msg == payload).all(dim=1)
 
 
 def roc(scores_marked: torch.Tensor | np.ndarray, scores_unmarked: torch.Tensor | np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
