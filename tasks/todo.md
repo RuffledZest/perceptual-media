@@ -11,7 +11,7 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 - [x] Task 2: config — YAML → dataclasses, strict keys (2026-09-18)
 - [x] Task 3: `Marker` protocol, `DecodeResult`, `NullMarker` (2026-09-18)
 - [x] Task 4: `ResultRow` (§6 schema) + `ResultWriter` (2026-09-18)
-- [ ] Task 5: decoding metrics — BER, recovery, ROC/AUC, FPR helpers
+- [x] Task 5: decoding metrics — BER, recovery, ROC/AUC, FPR helpers (2026-09-18)
 - [ ] Task 6: runner + `pm-run` CLI (vertical slice with NullMarker + Identity)
 - [ ] **Checkpoint A** — end-to-end CSV with marked + control rows, BER ≈ 0.5
 - [ ] Task 7: fidelity metrics — PSNR, SSIM, LPIPS

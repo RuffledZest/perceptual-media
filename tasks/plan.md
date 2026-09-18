@@ -140,10 +140,10 @@ directory with results, resolved config, and git hash.
 no sklearn.
 
 **Acceptance criteria:**
-- [ ] `ber(llrs, payload)` = 0 for perfect, 1 for inverted, batched
-- [ ] `payload_recovered(llrs, payload)` bool per item (all bits correct after hard slice; ECC-aware variant added in Task 16)
-- [ ] `roc(scores_marked, scores_unmarked)` returns FPR/TPR arrays + AUC; perfectly separable → AUC 1.0; identical distributions → AUC ≈ 0.5
-- [ ] `fpr_at_tpr(…, tpr=0.95)` and `threshold_for_fpr(scores_unmarked, fpr=1e-3)` with a documented warning that 1e-3/frame is unusable at 30 fps (brief §4.2)
+- [x] `ber(llrs, payload)` = 0 for perfect, 1 for inverted, batched
+- [x] `payload_recovered(llrs, payload)` bool per item (all bits correct after hard slice; ECC-aware variant added in Task 16)
+- [x] `roc(scores_marked, scores_unmarked)` returns FPR/TPR arrays + AUC; perfectly separable → AUC 1.0; identical distributions → AUC ≈ 0.5
+- [x] `fpr_at_tpr(…, tpr=0.95)` and `threshold_for_fpr(scores_unmarked, fpr=1e-3)` with a documented warning that 1e-3/frame is unusable at 30 fps (brief §4.2)
 
 **Verification:** `uv run pytest tests/metrics/test_decoding.py -q`
 **Dependencies:** Task 3. **Files:** `metrics/decoding.py`, `tests/metrics/test_decoding.py`. **Scope:** S
