@@ -198,10 +198,10 @@ user-supplied folder, not downloaded.
 Resize (down→up), Crop (random rectangle, with pad-back so shapes stay fixed).
 
 **Acceptance criteria:**
-- [ ] `distort/base.py`: `Distortion(nn.Module)` with `forward(x, gen) -> x` and `.last_params: dict`; `DistortionChain([...])` composes and merges params under each stage's name
-- [ ] Deterministic: same generator seed → identical output tensor
-- [ ] Gradient flows through Noise and Resize (`x.requires_grad_(); out.sum().backward()` gives non-None grad)
-- [ ] Runner logs `distortion_chain` name and `distortion_params` JSON per row
+- [x] `distort/base.py`: `Distortion(nn.Module)` with `forward(x, gen) -> x` and `.last_params: dict`; `DistortionChain([...])` composes and merges params under each stage's name
+- [x] Deterministic: same generator seed → identical output tensor
+- [x] Gradient flows through Noise and Resize (`x.requires_grad_(); out.sum().backward()` gives non-None grad)
+- [x] Runner logs `distortion_chain` name and `distortion_params` JSON per row
 
 **Verification:** `uv run pytest tests/distort/test_basic.py -q`
 **Dependencies:** Task 8. **Files:** `distort/{base,basic}.py`, `harness/runner.py`, `tests/distort/test_basic.py`. **Scope:** M
