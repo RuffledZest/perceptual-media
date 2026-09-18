@@ -8,6 +8,10 @@ capacity estimation with graceful refusal. See `claude_markdowns/PROJECT_BRIEF.m
 brief and `tasks/plan.md` for the build plan.
 
 ```
-uv sync
-uv run pytest
+uv sync                                        # deps (CUDA torch on Windows via cu130 index)
+uv run pytest                                  # test suite
+uv run pm-run configs/experiments/smoke.yaml   # run an experiment -> outputs/<name>-<stamp>/results.csv
 ```
+
+Layout: `src/perceptual_media/{core,markers,distort,metrics,harness}`, configs in `configs/`,
+external data paths in `configs/paths.yaml`. Progress: `tasks/todo.md`; decisions: `docs/worklog.md`.
