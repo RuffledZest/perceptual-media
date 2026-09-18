@@ -235,9 +235,9 @@ resample × sensor grid), using PIMoG's noise layer as the reference implementat
 named chains the rest of the project evaluates against.
 
 **Acceptance criteria:**
-- [ ] `Moire(display_ppi, capture_scale)` on a flat grey image produces a periodic pattern whose dominant spatial frequency is measurable via FFT and matches the expected beat frequency within 10 %
-- [ ] `configs/sim/print_camera.yaml` = Perspective → Illumination → Defocus+Motion → Resize → JPEG → Noise; `configs/sim/screen_camera.yaml` = same with Moiré inserted before Resize; each has a scalar `severity ∈ [0,1]` that scales every stage's range
-- [ ] `distort/presets.py::load_chain(name, severity)` builds the chain; smoke config runs both
+- [x] `Moire(display_ppi, capture_scale)` on a flat grey image produces a periodic pattern whose dominant spatial frequency is measurable via FFT and matches the expected beat frequency within 10 %
+- [x] `configs/sim/print_camera.yaml` = Perspective → Illumination → Defocus+Motion → Resize → JPEG → Noise; `configs/sim/screen_camera.yaml` = same with Moiré inserted before Resize; each has a scalar `severity ∈ [0,1]` that scales every stage's range
+- [x] `distort/presets.py::load_chain(name, severity)` builds the chain; smoke config runs both
 
 **Verification:** `uv run pytest tests/distort/test_moire.py tests/distort/test_presets.py -q`; manual: save a distorted sample at severity 0.5 and confirm it looks like a phone photo
 **Dependencies:** Tasks 10, 11. **Files:** `distort/{moire,presets}.py`, `configs/sim/*.yaml`, tests. **Scope:** M

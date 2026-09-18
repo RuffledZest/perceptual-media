@@ -107,10 +107,10 @@ mix.
 4. **Task 10 (blur):** StegaStamp's 7×7 {none, Gaussian σ∈[1,3], line} mixture is a reasonable
    default; make kernel size a parameter (7 px at 400 px is ~1.75 % of width — scale with
    resolution).
-5. **Task 12 (moiré):** implement the *sampling-model* moiré (render display subpixel grid,
-   resample at non-integer scale with a sensor grid) as the primary, and PIMoG's min-of-cosines
-   as `mode="pimog"` for reference. The AC in plan.md (measurable beat frequency via FFT) applies
-   to the sampling-model version only.
+5. **Task 12 (moiré):** *done.* Sampling-model moiré (RGB-stripe + black-matrix display render at
+   4× → Gaussian lens PSF → point-sampling sensor grid at `capture_scale` px/px with random phase
+   and ≤3° rotation → resize back) is the primary; measured beat frequency on flat grey matches
+   `|1 − round(1/s)·s|` within 1 % at s = 0.7 / 0.9 / 1.15. PIMoG's min-of-cosines is `mode="pimog"`.
 6. **Presets:** `print_camera` and `screen_camera` severity knob should, at severity = 1, cover at
    least the StegaStamp training ranges above so that a StegaStamp/Video Seal model evaluated in
    our harness sees nothing out-of-distribution by construction.

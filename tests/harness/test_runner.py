@@ -111,10 +111,10 @@ def test_cli_smoke_config(tmp_path: Path, capsys: pytest.CaptureFixture[str], mo
     assert "identity" in out and "AUC=" in out and "control:" in out
     runs = list(tmp_path.glob("smoke-*"))
     assert len(runs) == 1
-    assert len(read_results(runs[0])) >= 12
+    assert len(read_results(runs[0])) >= 12 * 3
 
 
 def test_unknown_preset_is_a_clear_error(tmp_path: Path) -> None:
-    cfg = _cfg(tmp_path, distortions=[DistortionConfig("print_camera", 0.5)])
-    with pytest.raises(KeyError, match="unknown distortion preset 'print_camera'"), pytest.warns(UserWarning):
+    cfg = _cfg(tmp_path, distortions=[DistortionConfig("no_such_preset", 0.5)])
+    with pytest.raises(KeyError, match="unknown distortion preset 'no_such_preset'"), pytest.warns(UserWarning):
         run_experiment(cfg)

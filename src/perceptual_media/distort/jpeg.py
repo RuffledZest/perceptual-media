@@ -184,7 +184,8 @@ class JPEG(Distortion):
     """JPEG at ``quality ~ U(q_min, q_max)`` with 4:2:0 subsampling.
 
     ``differentiable=False`` uses PIL (exact, no gradient); ``True`` uses the surrogate.
-    StegaStamp trains down to Q = 25.
+    StegaStamp trains down to Q = 25. A sampled quality of 100 is a passthrough (no codec),
+    so a chain at severity 0 is the exact identity.
     """
 
     name = "jpeg"
@@ -198,8 +199,8 @@ class JPEG(Distortion):
     def _distort(self, x: ImageBatch, gen: torch.Generator) -> ImageBatch:
         quality = _uniform(self.q_min, self.q_max, gen)
         self.last_params = {"quality": quality, "differentiable": self.differentiable}
-        if quality >= 100 and not self.differentiable:
-            quality = 100
+        if quality >= 100:
+            return x
         if self.differentiable:
             return jpeg_differentiable(x, quality, self.rounding)
         return jpeg_pil(x, int(round(quality)))
