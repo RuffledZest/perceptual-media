@@ -25,7 +25,8 @@ adds moiré.
 
 Single-axis presets (deterministic in severity, for isolating one distortion):
 ``perspective_fixed`` tilt = 60°·s; ``defocus_fixed`` σ = 3·s px; ``jpeg_fixed`` Q = 100 − 75·s;
-``resize_fixed`` scale = 1 − 0.6·s.
+``resize_fixed`` scale = 1 − 0.6·s. ``screen_channel`` is ``screen_camera`` minus perspective
+(the non-geometric channel, matched against rectified real captures in ``capture.channel``).
 """
 
 from __future__ import annotations
@@ -63,6 +64,9 @@ _PRESETS: dict[str, Callable[[float], DistortionChain]] = {
     "identity": lambda severity: DistortionChain([Identity()], name="identity"),
     "print_camera": lambda severity: DistortionChain(_camera_stages(severity, moire=False), name="print_camera"),
     "screen_camera": lambda severity: DistortionChain(_camera_stages(severity, moire=True), name="screen_camera"),
+    # screen_camera without the perspective stage: the non-geometric channel, for matching against
+    # rectified real captures (capture.channel)
+    "screen_channel": lambda severity: DistortionChain(_camera_stages(severity, moire=True)[1:], name="screen_channel"),
     # single-stage, deterministic-in-severity presets for isolating one axis
     "perspective_fixed": lambda severity: DistortionChain([Perspective(max_angle=60 * severity, max_roll=0, mode="pose", fixed=True)], name="perspective_fixed"),
     "defocus_fixed": lambda severity: DistortionChain([DefocusBlur(3.0 * severity, 3.0 * severity)], name="defocus_fixed"),

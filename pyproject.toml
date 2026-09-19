@@ -28,7 +28,7 @@ pm-run = "perceptual_media.harness.cli:main"
 pm-corpus = "perceptual_media.corpus.build:main"
 pm-plot = "perceptual_media.harness.plots:main"
 pm-compare = "perceptual_media.harness.compare:main"
-pm-capture = "perceptual_media.capture.log:main"
+pm-capture = "perceptual_media.capture.cli:main"
 
 [build-system]
 requires = ["uv_build>=0.12.1,<0.13.0"]

@@ -41,7 +41,8 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 ## Phase 4 — Week 4: Physical capture
 - [x] Task 23: capture protocol + `pm-capture log` (filename-nominal + EXIF + measured PnP pose; 24/24 calibration captures located)
 - [ ] Task 24: print-sheet tool (ids + fiducials)
-- [ ] Task 25: ingestion — locate, rectify, decode, rows with capture conditions; also un-rectified decode
+- [x] Task 25a: channel calibration — `pm-capture channel`, real channel vs `screen_channel` sim, `docs/results/week4_channel.md`
+- [ ] Task 25b: decode ingestion of marked captures → ResultRow (also un-rectified decode)
 - [ ] Task 26: 2AFC visibility tool + study (self + 5)
 - [ ] Task 27: Week-4 report → GO / NO-GO
 - [ ] **Checkpoint W4 (gate)** — pick Branch A (sync) or Branch B (budget map + refusal)

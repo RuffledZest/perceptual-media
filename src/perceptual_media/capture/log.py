@@ -1,4 +1,4 @@
-"""``pm-capture log``: build ``captures.csv`` for a folder of phone photos (plan Task 23).
+"""``pm-capture log`` (``capture.cli``): build ``captures.csv`` for a folder of phone photos (plan Task 23).
 
 One row per capture, combining three sources so nothing has to be typed by hand:
 
@@ -17,7 +17,6 @@ rather than appended to.
 
 from __future__ import annotations
 
-import argparse
 import json
 import sys
 from dataclasses import asdict, dataclass
@@ -30,7 +29,7 @@ from PIL import ExifTags, Image
 
 from perceptual_media.capture.locate import Located, estimate_pose, locate_screen_image, rectify
 from perceptual_media.capture.naming import CaptureName, parse_capture_name
-from perceptual_media.core.config import CaptureConfig, load_capture_config, load_paths
+from perceptual_media.core.config import CaptureConfig
 
 IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png"}
 
@@ -142,25 +141,8 @@ def log_folder(folder: Path, cfg: CaptureConfig, manifest: Path = Path("data/cor
     return df
 
 
-def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(prog="pm-capture", description=__doc__.split("\n\n")[0])
-    sub = ap.add_subparsers(dest="cmd", required=True)
-    lg = sub.add_parser("log", help="build captures.csv for a folder of capture photos")
-    lg.add_argument("set", help="capture set: a folder under paths.captures, or an explicit directory")
-    lg.add_argument("--config", default="configs/capture.yaml")
-    lg.add_argument("--paths", default="configs/paths.yaml")
-    args = ap.parse_args(argv)
-
-    cfg = load_capture_config(args.config)
-    folder = Path(args.set)
-    if not folder.is_dir():
-        folder = Path(load_paths(args.paths).captures) / args.set
-    if not folder.is_dir():
-        ap.error(f"no such capture set: {folder}")
-    df = log_folder(folder, cfg)
-    if df.empty:
-        print(f"no captures found in {folder}")
-        return 1
+def print_log(df: pd.DataFrame, folder: Path) -> None:
+    """Console summary of a captures table."""
     show = (
         "capture_id", "distance_m", "angle_deg", "measured_distance_m", "measured_angle_deg",
         "px_per_image_px", "reprojection_px", "locate_ok",
@@ -170,8 +152,3 @@ def main(argv: list[str] | None = None) -> int:
         print(df[cols].to_string(index=False, float_format=lambda x: f"{x:.2f}"))
     located = int(df["locate_ok"].sum()) if "locate_ok" in df else 0
     print(f"\n{len(df)} captures, {located} located -> {folder / 'captures.csv'}")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
