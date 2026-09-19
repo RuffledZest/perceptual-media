@@ -1,9 +1,9 @@
 # The physical rig behind the Week-4 captures (docs/capture_protocol.md). Nominal conditions
 # live in each capture's filename; this file is what turns pixels into metres and degrees.
 display:
-  name: BenQ 24in 1080p (model to confirm)
+  name: BenQ GW2790 27in 1920x1080
   resolution: [1920, 1080]
-  pixel_pitch_mm: 0.2745      # 24" 16:9 at 1920x1080; a 27" panel would be 0.311
+  pixel_pitch_mm: 0.311       # 27" 16:9 at 1920x1080 (597.9 mm wide)
 camera:
   name: Nothing Phone (2a) A063, main camera
   focal_35mm: 24.0            # 5.59 mm physical on a 1/1.56" sensor; EXIF omits the equivalent

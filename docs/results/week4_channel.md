@@ -1,7 +1,7 @@
 # Week 4a — The real screen→camera channel vs the simulator
 
 **Status:** complete, 2026-09-19, branch `week4-capture`. Capture set `screen_calib_20260919`
-(external root): 24 phone photos of 6 *unmarked* corpus images shown 1:1 on a 24" 1080p BenQ,
+(external root): 24 phone photos of 6 *unmarked* corpus images shown 1:1 on a 27" 1080p BenQ GW2790,
 Nothing Phone (2a) main camera, office room light, 0.5 m × {0°, 30°, 45°} + 1 m × 0°.
 Tools: `pm-capture log`, `pm-capture channel` (`docs/capture_protocol.md`). Simulator side:
 `screen_channel` preset (= `screen_camera` minus perspective), severities 0–1 in 0.1 steps, 4
@@ -11,7 +11,7 @@ seeds per image.
 
 1. **Localisation and pose work on all 24 captures** using the monitor as the fiducial:
    reprojection error < 5 px, and the by-eye conditions were good — "0°" measured 2–5°, "30°"
-   29–34°, "45°" 45–49°; "0.5 m" ≈ 0.42–0.47 m, "1 m" ≈ 0.71 m (24" pitch assumed).
+   29–34°, "45°" 45–49°; "0.5 m" ≈ 0.48–0.54 m, "1 m" ≈ 0.81 m (27" pitch, 0.311 mm).
 2. **The simulator's screen chain cannot reach the real head-on channel.** At 0.5 m / 0° the
    flat fills carry 22–25 grey levels of high-frequency residual with a dominant periodic
    component of amplitude 8–9 (colour moiré from the phone's Bayer CFA beating with the panel's
@@ -25,10 +25,10 @@ seeds per image.
 
    | condition (nominal) | measured | matched severity (mean, range over 6 images) | what drives it |
    |---|---|---|---|
-   | 0.5 m / 0° | 0.42 m, 3° | 0.57 (0.1–1.0) | flats pinned at 1.0 by moiré the sim can't reach; textured 0.4 |
-   | 0.5 m / 30° | 0.47 m, 32° | 0.92 (0.6–1.0) | blur 1.6 px + residual moiré |
-   | 0.5 m / 45° | 0.47 m, 48° | 0.80 (0.3–1.0) | blur 2.1 px; moiré gone |
-   | 1 m / 0° | 0.71 m, 2° | **0.25** (0.1–0.5) | mild everything |
+   | 0.5 m / 0° | 0.48 m, 3° | 0.57 (0.1–1.0) | flats pinned at 1.0 by moiré the sim can't reach; textured 0.4 |
+   | 0.5 m / 30° | 0.53 m, 32° | 0.92 (0.6–1.0) | blur 1.6 px + residual moiré |
+   | 0.5 m / 45° | 0.54 m, 48° | 0.80 (0.3–1.0) | blur 2.1 px; moiré gone |
+   | 1 m / 0° | 0.81 m, 2° | **0.25** (0.1–0.5) | mild everything |
 
 4. **The phone's tone curve matters more than its noise** for most classes. A per-channel
    tone-curve fit (not gain/offset) is what makes the comparison fair: it lifts textured from
@@ -57,10 +57,10 @@ flat classes only; blur on the textured classes):
 
 | condition | angle | dist | px/px | blur σ | noise | moiré amp | PSNR_cc | SSIM_cc | LPIPS_cc |
 |---|---|---|---|---|---|---|---|---|---|
-| 0.5 m / 0° | 3.3° | 0.42 | 3.69 | 0.62 | 15.7 | 6.0 | 20.2 | 0.43 | 0.52 |
-| 0.5 m / 30° | 31.6° | 0.47 | 3.14 | 1.62 | 7.2 | 1.7 | 21.9 | 0.60 | 0.43 |
-| 0.5 m / 45° | 47.7° | 0.47 | 2.84 | 2.12 | 2.9 | 1.8 | 20.4 | 0.75 | 0.26 |
-| 1 m / 0° | 2.5° | 0.71 | 2.20 | 0.62 | 0.9 | 0.2 | 26.4 | 0.86 | 0.15 |
+| 0.5 m / 0° | 3.3° | 0.48 | 3.69 | 0.62 | 15.7 | 6.0 | 20.2 | 0.43 | 0.52 |
+| 0.5 m / 30° | 31.6° | 0.53 | 3.14 | 1.62 | 7.2 | 1.7 | 21.9 | 0.60 | 0.43 |
+| 0.5 m / 45° | 47.7° | 0.54 | 2.84 | 2.12 | 2.9 | 1.8 | 20.4 | 0.75 | 0.26 |
+| 1 m / 0° | 2.5° | 0.81 | 2.20 | 0.62 | 0.9 | 0.2 | 26.4 | 0.86 | 0.15 |
 
 Simulator (`screen_channel`, mean over the same six images):
 
@@ -97,9 +97,9 @@ not blur or noise.
 
 ## Honest limits
 
-- One rig, one room, one phone, six images. The by-eye distances are consistent but short
-  (0.42–0.47 m for "0.5 m"); the panel size is assumed 24" — the angles are size-free, the
-  distances scale with the true pitch.
+- One rig, one room, one phone, six images. The by-eye distances are consistent (0.48–0.54 m
+  for "0.5 m", 0.81 m for "1 m"); the panel is a 27" GW2790 (pitch 0.311 mm) — the angles are
+  size-free, the distances scale with the pitch.
 - Residual registration after rectification is 1–3 px at the corners (ECC check); it costs 1–3 dB
   on textured content and is included in the reported PSNR_cc. The decode round does not depend
   on it (the decoder receives the rectified image either way).
