@@ -39,7 +39,7 @@ is met and `uv run pytest` is green. Weeks 5–6 tasks are written after the Wee
 - [x] **Checkpoint W3** — learned vs classical gap measured (2026-09-18: perspective cliff 1° → ~15°; both dead at ≥30°; flat-image JPEG failure recurs)
 
 ## Phase 4 — Week 4: Physical capture
-- [ ] Task 23: capture protocol + `pm-capture log`
+- [x] Task 23: capture protocol + `pm-capture log` (filename-nominal + EXIF + measured PnP pose; 24/24 calibration captures located)
 - [ ] Task 24: print-sheet tool (ids + fiducials)
 - [ ] Task 25: ingestion — locate, rectify, decode, rows with capture conditions; also un-rectified decode
 - [ ] Task 26: 2AFC visibility tool + study (self + 5)

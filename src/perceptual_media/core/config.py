@@ -109,6 +109,32 @@ class PathsConfig:
     datasets: dict[str, str] = field(default_factory=dict)
 
 
+@dataclass
+class DisplayConfig:
+    name: str
+    resolution: list[int]
+    """Native ``[width, height]`` in pixels; the viewer shows images at 1:1, centred."""
+    pixel_pitch_mm: float
+    """Physical pixel size; sets the scale of the measured capture distance."""
+
+
+@dataclass
+class CameraConfig:
+    name: str
+    focal_35mm: float
+    """35 mm-equivalent focal length of the lens used (phone EXIF often omits it)."""
+
+
+@dataclass
+class CaptureConfig:
+    """Schema for ``configs/capture.yaml``: the rig the Week-4 captures were taken with."""
+
+    display: DisplayConfig
+    camera: CameraConfig
+    image_px: int = 512
+    """Side of the displayed corpus image (shown at 1:1)."""
+
+
 # ---------------------------------------------------------------------------
 # Loading / dumping
 # ---------------------------------------------------------------------------
@@ -239,3 +265,8 @@ def dump_config(cfg: Any, path: str | Path) -> None:
 def load_paths(path: str | Path = "configs/paths.yaml") -> PathsConfig:
     """Load the external-paths config."""
     return load_config(path, PathsConfig)
+
+
+def load_capture_config(path: str | Path = "configs/capture.yaml") -> CaptureConfig:
+    """Load the capture-rig config."""
+    return load_config(path, CaptureConfig)
