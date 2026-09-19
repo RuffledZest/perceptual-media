@@ -137,3 +137,18 @@ uv run pm-capture decode decode_20260919 --sheet decode_20260919 --controls scre
 writes an ordinary run directory under ``outputs/`` with ``distortion_chain`` ∈ {``real_screen``,
 ``real_screen_unrectified``, ``real_screen_control``} so ``pm-plot`` / ``pm-compare`` work on it,
 plus ``<set>/check/`` overlays, ``<set>/rectified/`` crops and ``<set>/decode_log.csv``.
+
+## 2AFC visibility study (Task 26)
+
+```
+uv run pm-capture afc serve --sheet decode_20260919      # open http://127.0.0.1:8765/ on the laptop
+uv run pm-capture afc report --sheet decode_20260919
+```
+
+Run it on the laptop screen at ~60 cm (the Watson viewing condition, plan Q4). Each participant
+types a name and sees every slide's original/marked pair twice (36 pairs), side by side at 1:1
+device pixels, random left/right, unlimited time, and clicks the one they think was modified.
+Responses go to ``paths.captures/2afc/<sheet>/responses.csv``. The report gives accuracy with
+exact 95 % intervals and a binomial test vs 0.5, overall, per marker, per marker × class and per
+participant. Target: yourself + 5 people. "Invisible" = the interval for Video Seal contains 0.5;
+the classical marker at 1 JND is expected to be visible on flat/gradient (Week 2, LPIPS 0.4–0.7).

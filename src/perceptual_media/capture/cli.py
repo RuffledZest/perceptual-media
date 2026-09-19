@@ -4,6 +4,7 @@
 * ``pm-capture channel <set>``  — measure the real channel and match it to the simulator
 * ``pm-capture sheet <spec>``   — build the display sheet (slides) for a decode round
 * ``pm-capture decode <set> --sheet <name> [--controls <set>]`` — decode slide captures into a run dir
+* ``pm-capture afc serve|report --sheet <name>`` — the 2AFC visibility study and its report
 """
 
 from __future__ import annotations
@@ -45,7 +46,30 @@ def main(argv: list[str] | None = None) -> int:
     dc.add_argument("--controls", default=None, help="unmarked capture set (with captures.csv) for control rows")
     dc.add_argument("--config", default="configs/capture.yaml")
     dc.add_argument("--output-dir", default="outputs")
+    af = sub.add_parser("afc", help="2AFC visibility study: serve the page, or report the responses")
+    af.add_argument("action", choices=["serve", "report"])
+    af.add_argument("--sheet", required=True)
+    af.add_argument("--corpus", default="data/corpus")
+    af.add_argument("--repeats", type=int, default=2)
+    af.add_argument("--port", type=int, default=8765)
     args = ap.parse_args(argv)
+
+    if args.cmd == "afc":
+        from perceptual_media.capture.afc import Study, report, serve
+
+        captures = Path(load_paths(args.paths).captures)
+        sheet = Path(args.sheet) if Path(args.sheet).is_dir() else captures / "sheets" / args.sheet
+        study = Study(sheet, Path(args.corpus), captures / "2afc" / sheet.name, repeats=args.repeats)
+        if args.action == "serve":
+            with open(sheet / "spec.json", encoding="utf-8") as fh:
+                image_px = int(json.load(fh)["image_px"])
+            serve(study, image_px, args.port)
+            return 0
+        if not study.responses.exists():
+            print(f"no responses yet at {study.responses}")
+            return 1
+        report(study.responses)
+        return 0
 
     if args.cmd == "sheet":
         from perceptual_media.capture.sheet import SheetSpec, build_sheet
