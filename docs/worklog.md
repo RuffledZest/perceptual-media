@@ -136,3 +136,39 @@ passes there. Result writeups only reference runs made from committed `main` has
 **Next:** merge `week3-videoseal` → `main`; Phase 4 / Week 4 (physical capture) — Task 23
 capture protocol + logger, Task 24 print sheets, Task 25 ingestion, Task 26 2AFC tool. The user
 will supply phone captures of six named corpus images once Phase 3 is closed.
+
+## 2026-09-19 — Week 4 (branch `week4-capture`, Tasks 23–26)
+
+**Capture session (user).** BenQ 24" 1080p, Nothing Phone (2a) main camera, office room light,
+tap-to-expose on the image, corpus images at 1:1 in a dark full-screen viewer. Calibration set
+`screen_calib_20260919`: 6 unmarked images × {0.5 m × 0°/30°/45°, 1 m × 0°} = 24 photos
+(8192×6144). Distances/angles by eye; panel brightness deliberately unchanged (vignette centre
+clips). Copied from `Downloads/captures` to the external root.
+
+**Task 23** — `capture/{naming,locate,log}.py`, `pm-capture log`. Monitor-as-fiducial locator:
+uniform-region panel detection → centred-square prediction → surround-gated edge snap →
+square-constraint completion; PnP pose (ITERATIVE; IPPE_SQUARE on OpenCV 5.0 returned
+non-reprojecting solutions). Log is derived from filename + EXIF + geometry, nothing typed.
+24/24 located, reprojection < 5 px; nominal 0/30/45° measured 2–5 / 29–34 / 45–49°.
+
+**Task 25a** — `capture/channel.py`, `pm-capture channel`, `screen_channel` preset (screen chain
+minus perspective). Per-capture tone curve (an affine colour map under-models the phone by
+4–8 dB), blur σ, noise / moiré / shading on ≥ 90 %-flat references, sim severity match.
+Result `docs/results/week4_channel.md`: head-on 0.5 m moiré (amp 8–9, residual 22–25) is beyond
+the simulator at any severity (≤ 4 / 2.4) — Bayer CFA vs subpixels at 3.7 px/px, a regime the
+`Moire` stage does not sample; 1 m head-on ≈ severity 0.25; blur grows with angle 0.6 → 2.1 px.
+The real channel is per-mechanism, not one severity. Two of six images clip in capture.
+
+**Task 24** — `capture/sheet.py`, `pm-capture sheet`: display sheet (screen variant of the print
+sheet), 18 slides (`decode_20260919`: Video Seal on 12 images, classical on the 6 calibration
+images), ArUco fiducials with quiet zones, `sheet.csv` with the exact message per slide.
+**Task 25b** — `capture/ingest.py`, `pm-capture decode`: fiducial homography → rectify → decode,
+plus unrectified crop (sync gap) and control rows; ordinary run dir. Dry run on synthetic photos
+of the real slides: Video Seal recovers the photo slide at 17° and 35°, classical fails after
+rectification (1–3 px residual registration breaks the block grid) — as the 1° cliff predicts.
+**Task 26** — `capture/afc.py`, `pm-capture afc serve|report`: 2AFC page at 1:1 device pixels,
+exact binomial intervals. Verified in Chrome.
+
+**Next (needs the user):** shoot the decode round (`docs/capture_protocol.md`, 38–54 shots) and
+run the 2AFC with 5 people; then Task 27 report + Checkpoint W4. Candidate simulator fixes if
+Branch A: CFA-aware moiré at 2–4 px/px, a sharpening stage, tone-curve illumination.
