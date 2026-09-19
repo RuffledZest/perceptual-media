@@ -93,4 +93,47 @@ input to channel measurement and decoding).
 5. PnP on the four corners gives distance and viewing angle; reprojection error is the
    consistency check.
 
-Print medium: not implemented until the print sheet with fiducials exists (Task 24).
+Print medium: not implemented until a print sheet exists (the display sheet's fiducials would
+carry over unchanged; only the locator's fallback differs).
+
+## Decode round (Task 24/25): the display sheet
+
+```
+uv run pm-capture sheet configs/capture_sheet.yaml      # -> paths.captures/sheets/<name>/S00.png ...
+```
+
+One 1920×1080 **slide** per (image × marker): the marked image at 1:1 in the centre, four ArUco
+fiducials (DICT_4X4_50 ids 0–3, white quiet zone) outside it, and the slide id. ``sheet.csv``
+records what each slide carries (marker, strength, 64-bit message, seed, digital PSNR/SSIM/
+LPIPS); ``<id>_marked.png`` is the bare marked image for the 2AFC study. The fiducials are for
+*measurement only*: the ingestion crops the image before the decoder sees anything.
+
+Shooting a slide: open it **at 100 % / actual size, full-screen** on the display (the image must
+not be resampled). Same phone settings and tap-to-expose as before; the four fiducials must be
+in frame. Name the photo with the **slide id** as the image token:
+
+```
+S08__screen__d1__a30__room.jpg
+```
+
+Shot list for ``decode_20260919`` (18 slides: S00–S11 Video Seal on 12 images, S12–S17 classical
+on the 6 calibration images):
+
+| slides | conditions | shots | why |
+|---|---|---|---|
+| S00–S11 | **1 m / 30°** | 12 | the gate condition (plan Checkpoint W4) |
+| S00–S11 | 0.5 m / 0° | 12 | worst moiré (calibration set) |
+| S00–S11 | 1 m / 0° | 12 | mildest channel; separates moiré from distance |
+| S00–S11 | 0.5 m / 45° | 12 | the brief's ±45° target |
+| S12–S17 | 1 m / 0° | 6 | classical is sync-limited at 1°; one condition suffices |
+
+54 shots; the reduced version keeps the first two rows for all 12 slides, the third and fourth
+rows for the photo slides only (S08–S11), and the classical row: 38 shots.
+
+```
+uv run pm-capture decode decode_20260919 --sheet decode_20260919 --controls screen_calib_20260919
+```
+
+writes an ordinary run directory under ``outputs/`` with ``distortion_chain`` ∈ {``real_screen``,
+``real_screen_unrectified``, ``real_screen_control``} so ``pm-plot`` / ``pm-compare`` work on it,
+plus ``<set>/check/`` overlays, ``<set>/rectified/`` crops and ``<set>/decode_log.csv``.

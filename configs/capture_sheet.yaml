@@ -1,0 +1,29 @@
+# Decode-round display sheet (Task 24): what to embed, in which images, for the phone to photograph.
+# Video Seal (the marker that survived simulated perspective) on two images per class; the classical
+# marker only on the six calibration images — it is sync-limited at 1 deg and one condition suffices
+# to show that on real captures. Same message convention and inner code as the Week-2/3 sweeps.
+name: decode_20260919
+seed: 0
+images:
+  - flat_02_mid_grey
+  - flat_06_brand_blue
+  - gradient_03_radial_vignette
+  - gradient_00_linear_h_grey
+  - text_02_poster_white_on_navy
+  - text_00_document_black_on_white
+  - textured_00_value_noise_grey
+  - textured_01_value_noise_colour
+  - photo_003
+  - photo_000
+  - photo_001
+  - photo_007
+markers:
+  - marker: {name: videoseal, n_bits: 256, params: {}}
+    ecc: {name: bch, n: 127, k: 64, repeat: 2}
+    strength: 1.0
+  - marker: {name: classical_ss, n_bits: 127, params: {key: 0}}
+    ecc: {name: bch, n: 127, k: 64}
+    strength: 1.0
+    images: [flat_02_mid_grey, flat_06_brand_blue, gradient_03_radial_vignette, text_02_poster_white_on_navy, textured_00_value_noise_grey, photo_003]
+resolution: [1920, 1080]
+image_px: 512

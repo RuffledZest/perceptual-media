@@ -2,11 +2,14 @@
 
 * ``pm-capture log <set>``      — build ``captures.csv`` (+ check overlays, rectified crops)
 * ``pm-capture channel <set>``  — measure the real channel and match it to the simulator
+* ``pm-capture sheet <spec>``   — build the display sheet (slides) for a decode round
+* ``pm-capture decode <set> --sheet <name> [--controls <set>]`` — decode slide captures into a run dir
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -33,7 +36,29 @@ def main(argv: list[str] | None = None) -> int:
     ch = sub.add_parser("channel", help="measure the real channel per capture and match it to the simulator")
     ch.add_argument("set")
     ch.add_argument("--corpus", default="data/corpus")
+    sh = sub.add_parser("sheet", help="build the display sheet (one slide per image x marker) from a spec YAML")
+    sh.add_argument("spec", help="e.g. configs/capture_sheet.yaml")
+    sh.add_argument("--corpus", default="data/corpus")
+    dc = sub.add_parser("decode", help="locate, rectify and decode photos of display-sheet slides")
+    dc.add_argument("set")
+    dc.add_argument("--sheet", required=True, help="sheet name under paths.captures/sheets, or a directory")
+    dc.add_argument("--controls", default=None, help="unmarked capture set (with captures.csv) for control rows")
+    dc.add_argument("--config", default="configs/capture.yaml")
+    dc.add_argument("--output-dir", default="outputs")
     args = ap.parse_args(argv)
+
+    if args.cmd == "sheet":
+        from perceptual_media.capture.sheet import SheetSpec, build_sheet
+        from perceptual_media.core.config import load_config
+
+        spec = load_config(args.spec, SheetSpec)
+        out = Path(load_paths(args.paths).captures) / "sheets" / spec.name
+        df = build_sheet(spec, out, Path(args.corpus))
+        cols = ["slide_id", "image_id", "marker", "strength", "psnr", "ssim", "lpips", "message_hex"]
+        with pd.option_context("display.width", 200, "display.max_rows", 500):
+            print(df[cols].to_string(index=False, float_format=lambda x: f"{x:.3f}"))
+        print(f"\n{len(df)} slides -> {out}")
+        return 0
 
     folder = _resolve_set(args.set, args.paths)
     if args.cmd == "log":
@@ -44,6 +69,35 @@ def main(argv: list[str] | None = None) -> int:
             print(f"no captures found in {folder}")
             return 1
         print_log(df, folder)
+        return 0
+
+    if args.cmd == "decode":
+        from perceptual_media.capture.ingest import decode_set
+
+        sheet = Path(args.sheet)
+        if not sheet.is_dir():
+            sheet = Path(load_paths(args.paths).captures) / "sheets" / args.sheet
+        controls = _resolve_set(args.controls, args.paths) if args.controls else None
+        run_dir = decode_set(
+            folder, sheet, load_capture_config(args.config), controls_dir=controls, output_dir=Path(args.output_dir)
+        )
+        df = pd.read_csv(run_dir / "results.csv")
+        real = df[df["distortion_chain"] == "real_screen"]
+        if not real.empty:
+            cond = real["capture_conditions"].apply(lambda j: json.loads(j))
+            real = real.assign(
+                capture=cond.apply(lambda d: d["capture_id"]),
+                marker=real["distortion_params"].apply(lambda j: json.loads(j)["marker"]),
+            )
+            with pd.option_context("display.width", 200, "display.max_rows", 500):
+                print(
+                    real[["capture", "marker", "ber", "payload_recovered", "detector_score"]].to_string(
+                        index=False, float_format=lambda x: f"{x:.3f}"
+                    )
+                )
+        n_rect = int((df["distortion_chain"] == "real_screen").sum())
+        n_ctrl = int((df["distortion_chain"] == "real_screen_control").sum())
+        print(f"\n{len(df)} rows ({n_rect} rectified, {n_ctrl} control) -> {run_dir}")
         return 0
 
     from perceptual_media.capture.calibrate import calibrate

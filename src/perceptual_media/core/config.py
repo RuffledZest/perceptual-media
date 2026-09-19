@@ -251,8 +251,9 @@ def load_config(path: str | Path, schema: type[T] = ExperimentConfig) -> T:  # t
 
 
 def to_dict(cfg: Any) -> dict[str, Any]:
-    """Dataclass → plain dict (recursively), suitable for YAML."""
-    return dataclasses.asdict(cfg)
+    """Dataclass → plain dict (recursively), suitable for YAML. A plain mapping passes through
+    (physical-capture runs record a small ad-hoc config)."""
+    return dataclasses.asdict(cfg) if is_dataclass(cfg) and not isinstance(cfg, type) else dict(cfg)
 
 
 def dump_config(cfg: Any, path: str | Path) -> None:
